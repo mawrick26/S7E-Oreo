@@ -134,6 +134,31 @@ static inline int tick_nohz_tick_stopped(void)
 	return __this_cpu_read(tick_cpu_sched.tick_stopped);
 }
 
+enum tick_broadcast_mode {
+	TICK_BROADCAST_OFF,
+	TICK_BROADCAST_ON,
+	TICK_BROADCAST_FORCE,
+};
+
+#ifdef CONFIG_GENERIC_CLOCKEVENTS_BROADCAST
+extern void tick_broadcast_control(enum tick_broadcast_mode mode);
+#else
+static inline void tick_broadcast_control(enum tick_broadcast_mode mode) { }
+#endif /* BROADCAST */
+
+static inline void tick_broadcast_enable(void)
+{
+	tick_broadcast_control(TICK_BROADCAST_ON);
+}
+static inline void tick_broadcast_disable(void)
+{
+	tick_broadcast_control(TICK_BROADCAST_OFF);
+}
+static inline void tick_broadcast_force(void)
+{
+	tick_broadcast_control(TICK_BROADCAST_FORCE);
+}
+
 extern void tick_nohz_idle_enter(void);
 extern void tick_nohz_idle_exit(void);
 extern void tick_nohz_irq_exit(void);
