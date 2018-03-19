@@ -50,7 +50,7 @@ config IOSCHED_DEADLINE
 
 config IOSCHED_MAPLE
 	tristate "Maple I/O scheduler"
-	depends on STATE_NOTIFIER
+	depends on FB
 	default y
 
 config IOSCHED_NOOP
