@@ -480,15 +480,6 @@ static int __init do_early_param(char *param, char *val, const char *unused)
 		}
 	}
 	/* We accept everything at this stage. */
-#ifdef CONFIG_KNOX_KAP
-	if ((strncmp(param, "androidboot.security_mode", 26) == 0)) {
-		pr_warn("val = %d\n",*val);
-	        if ((strncmp(val, "1526595585", 10) == 0)) {
-				pr_info("Security Boot Mode \n");
-			}
-	}
-
-#endif
 #ifdef CONFIG_RKP_KDP
 	if ((strncmp(param, "bootmode", 9) == 0)) {
 			//printk("\n RKP22 In Recovery Mode= %d\n",*val);
