@@ -34,7 +34,3 @@ obj-$(CONFIG_MST_LDO)	  += mstdrv/
 # Knox SDP
 obj-$(CONFIG_SDP) += sdp/
 obj-$(CONFIG_SDP) += sdp/built-in.o
-# TIMA uevent 
-obj-$(CONFIG_TIMA)     += tima_uevent/tima_uevent.o
-#ICCC
-obj-$(CONFIG_TZ_ICCC)	  += tz_iccc/
