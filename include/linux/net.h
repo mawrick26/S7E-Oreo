@@ -116,7 +116,6 @@ struct socket {
 	struct file		*file;
 	struct sock		*sk;
 	const struct proto_ops	*ops;
-
 };
 
 struct vm_area_struct;

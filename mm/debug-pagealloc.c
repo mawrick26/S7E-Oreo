@@ -5,9 +5,6 @@
 #include <linux/page-debug-flags.h>
 #include <linux/poison.h>
 #include <linux/ratelimit.h>
-#ifdef CONFIG_SENTINEL
-#include <linux/sentinel.h>
-#endif
 
 static inline void set_page_poison(struct page *page)
 {
