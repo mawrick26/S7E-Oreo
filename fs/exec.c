@@ -66,10 +66,6 @@
 
 #include <trace/events/sched.h>
 
-#ifdef CONFIG_RKP_KDP
-#define rkp_is_nonroot(x) ((x->cred->type)>>1 & 1)
-#endif /*CONFIG_RKP_KDP*/
-
 int suid_dumpable = 0;
 
 static LIST_HEAD(formats);
@@ -875,11 +871,6 @@ static int exec_mmap(struct mm_struct *mm)
 	activate_mm(active_mm, mm);
 	tsk->mm->vmacache_seqnum = 0;
 	vmacache_flush(tsk);
-#ifdef CONFIG_RKP_KDP
-	if(rkp_cred_enable){
-		rkp_call(RKP_CMDID(0x43),(unsigned long long)current_cred(), (unsigned long long)mm->pgd,0,0,0);
-	}
-#endif /*CONFIG_RKP_KDP*/
 	task_unlock(tsk);
 	if (old_mm) {
 		up_read(&old_mm->mmap_sem);
@@ -1082,47 +1073,6 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
 	task_unlock(tsk);
 	perf_event_comm(tsk, exec);
 }
-#ifdef CONFIG_RKP_NS_PROT
-extern struct super_block *sys_sb;	/* pointer to superblock */
-extern struct super_block *rootfs_sb;	/* pointer to superblock */
-extern int is_boot_recovery;
-
-static int invalid_drive(struct linux_binprm * bprm) 
-{
-	struct super_block *sb =  NULL;
-	struct vfsmount *vfsmnt = NULL;
-	
-	vfsmnt = bprm->file->f_path.mnt;
-	if(!vfsmnt || 
-		!rkp_ro_page((unsigned long)vfsmnt)) {
-		printk("\nInvalid Drive #%s# #%p#\n",bprm->filename,vfsmnt);
-		return 1;
-	} 
-	sb = vfsmnt->mnt_sb;
-
-	if((!is_boot_recovery) &&
-		sb != rootfs_sb   
-		&& sb != sys_sb) {
-		printk("\n Superblock Mismatch #%s# vfsmnt #%p#sb #%p:%p:%p#\n",
-					bprm->filename,vfsmnt,sb,rootfs_sb,sys_sb);
-		return 1;
-	}
-
-	return 0;
-}
-#define RKP_CRED_SYS_ID 1000
-
-static int is_rkp_priv_task(void)
-{
-	struct cred *cred = (struct cred *)current_cred();
-
-	if(cred->uid.val <= (uid_t)RKP_CRED_SYS_ID || cred->euid.val <= (uid_t)RKP_CRED_SYS_ID ||
-		cred->gid.val <= (gid_t)RKP_CRED_SYS_ID || cred->egid.val <= (gid_t)RKP_CRED_SYS_ID ){
-		return 1;
-	}
-	return 0;
-}
-#endif
 
 int flush_old_exec(struct linux_binprm * bprm)
 {
@@ -1141,13 +1091,7 @@ int flush_old_exec(struct linux_binprm * bprm)
 	 * Release all of the old mmap stuff
 	 */
 	acct_arg_size(bprm, 0);
-#ifdef CONFIG_RKP_NS_PROT
-	if(rkp_cred_enable &&
-		is_rkp_priv_task() && 
-		invalid_drive(bprm)) {
-		panic("\n Illegal Execution file_name #%s#\n",bprm->filename);
-	}
-#endif /*CONFIG_RKP_NS_PROT*/
+
 	retval = exec_mmap(bprm->mm);
 	if (retval)
 		goto out;
