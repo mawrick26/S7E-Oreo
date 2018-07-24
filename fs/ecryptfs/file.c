@@ -309,10 +309,6 @@ static int ecryptfs_set_fmpinfo(struct file *file, struct inode *inode, unsigned
 			mapping->alg = crypt_stat->cipher;
 		}
 		mapping->hash_tfm = crypt_stat->hash_tfm;
-#ifdef CONFIG_CRYPTO_FIPS
-		mapping->cc_enable =
-			(mount_crypt_stat->flags & ECRYPTFS_ENABLE_CC)?1:0;
-#endif
 	} else {
 		mapping->iv = NULL;
 		mapping->key = NULL;
@@ -320,9 +316,6 @@ static int ecryptfs_set_fmpinfo(struct file *file, struct inode *inode, unsigned
 		mapping->sensitive_data_index = 0;
 		mapping->alg = NULL;
 		mapping->hash_tfm = NULL;
-#ifdef CONFIG_CRYPTO_FIPS
-		mapping->cc_enable = 0;
-#endif
 		mapping->plain_text = 0;
 	}
 

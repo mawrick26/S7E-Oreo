@@ -429,9 +429,6 @@ struct address_space {
 	char			*alg;		/* algorithm */
 	pgoff_t			sensitive_data_index;	/* data starts here */
 	struct crypto_hash	*hash_tfm;	/* hash transform */
-#ifdef CONFIG_CRYPTO_FIPS
-	bool			cc_enable;	/* cc flag */
-#endif
 	bool			use_fmp;	/* use fmp flag  */
 	bool			plain_text;	/* plain_text flag */
 #endif
