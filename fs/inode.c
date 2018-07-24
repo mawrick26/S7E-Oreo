@@ -178,9 +178,6 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
 	mapping->alg = NULL;
 	mapping->sensitive_data_index = 0;
 	mapping->hash_tfm = NULL;
-#ifdef CONFIG_CRYPTO_FIPS
-	mapping->cc_enable = 0;
-#endif
 	mapping->use_fmp = 0;
 	mapping->plain_text = 0;
 #endif
@@ -431,8 +428,7 @@ static void inode_lru_list_add(struct inode *inode)
  */
 void inode_add_lru(struct inode *inode)
 {
-	if (!(inode->i_state & (I_DIRTY_ALL | I_SYNC |
-				I_FREEING | I_WILL_FREE)) &&
+	if (!(inode->i_state & (I_DIRTY | I_SYNC | I_FREEING | I_WILL_FREE)) &&
 	    !atomic_read(&inode->i_count) && inode->i_sb->s_flags & MS_ACTIVE)
 		inode_lru_list_add(inode);
 }

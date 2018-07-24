@@ -369,11 +369,6 @@ PERL		= perl
 PYTHON		= python
 CHECK		= sparse
 
-ifeq ($(CONFIG_CRYPTO_FIPS),)
-    READELF        = $(CROSS_COMPILE)readelf
-    export READELF
-endif
-
 ifeq ($(CONFIG_FIPS_FMP),)
     READELF        = $(CROSS_COMPILE)readelf
     export READELF

@@ -141,20 +141,11 @@ static const struct file_operations proc_crypto_ops = {
 	.release	= seq_release
 };
 
-#ifdef CONFIG_CRYPTO_FIPS
-void crypto_init_proc(int *fips_error)
-{
-	proc_create("crypto", 0, NULL, &proc_crypto_ops);
-	crypto_sysctl_table[0].data = fips_error;
-	crypto_proc_fips_init();
-}
-#else
 void __init crypto_init_proc(void)
 {
 	proc_create("crypto", 0, NULL, &proc_crypto_ops);
 	crypto_proc_fips_init();
 }
-#endif
 
 void __exit crypto_exit_proc(void)
 {
