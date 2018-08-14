@@ -464,15 +464,12 @@ struct page *swapin_readahead(swp_entry_t entry, gfp_t gfp_mask,
 	unsigned long entry_offset = swp_offset(entry);
 	unsigned long offset = entry_offset;
 	unsigned long start_offset, end_offset;
-	unsigned long mask;
+	unsigned long mask = is_swap_fast(entry) ? 0 :
+				(1UL << page_cluster) - 1;
 	struct blk_plug plug;
 
 	mask = swapin_nr_pages(offset) - 1;
 	if (!mask)
-		goto skip;
-
-	/* If exiting, don't do swap readahead. */
-	if (current->flags & PF_EXITING)
 		goto skip;
 
 	/* Read a page_cluster sized and aligned cluster around offset. */

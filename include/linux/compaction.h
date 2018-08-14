@@ -22,12 +22,16 @@
 #define COMPACT_CONTENDED_LOCK	2
 
 #ifdef CONFIG_COMPACTION
+extern int PageMovable(struct page *page);
+extern void __SetPageMovable(struct page *page, struct address_space *mapping);
+extern void __ClearPageMovable(struct page *page);
 extern int sysctl_compact_memory;
 extern int sysctl_compaction_handler(struct ctl_table *table, int write,
 			void __user *buffer, size_t *length, loff_t *ppos);
 extern int sysctl_extfrag_threshold;
 extern int sysctl_extfrag_handler(struct ctl_table *table, int write,
 			void __user *buffer, size_t *length, loff_t *ppos);
+extern int sysctl_compact_unevictable_allowed;
 
 extern int fragmentation_index(struct zone *zone, unsigned int order);
 extern unsigned long try_to_compact_pages(struct zonelist *zonelist,
@@ -100,6 +104,18 @@ static inline bool compaction_restarting(struct zone *zone, int order)
 }
 
 #else
+static inline int PageMovable(struct page *page)
+{
+	return 0;
+}
+static inline void __SetPageMovable(struct page *page,
+			struct address_space *mapping)
+{
+}
+ static inline void __ClearPageMovable(struct page *page)
+{
+}
+
 static inline unsigned long try_to_compact_pages(struct zonelist *zonelist,
 			int order, gfp_t gfp_mask, nodemask_t *nodemask,
 			enum migrate_mode mode, int *contended,
@@ -133,6 +149,7 @@ static inline bool compaction_deferred(struct zone *zone, int order)
 #endif /* CONFIG_COMPACTION */
 
 #if defined(CONFIG_COMPACTION) && defined(CONFIG_SYSFS) && defined(CONFIG_NUMA)
+struct node;
 extern int compaction_register_node(struct node *node);
 extern void compaction_unregister_node(struct node *node);
 
