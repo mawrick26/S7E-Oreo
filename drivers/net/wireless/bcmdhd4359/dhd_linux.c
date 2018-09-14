@@ -3236,7 +3236,6 @@ dhd_set_packet_filter(dhd_pub_t *dhd)
 {
 	int i;
 
-	DHD_TRACE(("%s: enter\n", __FUNCTION__));
 	if (dhd_pkt_filter_enable) {
 		for (i = 0; i < dhd->pktfilter_count; i++) {
 			dhd_pktfilter_offload_set(dhd, dhd->pktfilter[i]);
@@ -6356,7 +6355,6 @@ void dhd_runtime_pm_enable(dhd_pub_t *dhdp)
 {
 	if (dhd_get_idletime(dhdp)) {
 		dhd_os_runtimepm_timer(dhdp, dhd_runtimepm_ms);
-		DHD_ERROR(("DHD Runtime PM Enabled \n"));
 	}
 }
 

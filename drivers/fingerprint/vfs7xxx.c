@@ -866,11 +866,9 @@ static irqreturn_t vfsspi_irq(int irq, void *context)
 			wake_lock_timeout(&vfsspi_device->fp_signal_lock, 3 * HZ);
 #endif
 #endif
-			pr_info("%s disableIrq\n", __func__);
 		}
 		else {
 			spin_unlock(&vfsspi_device->irq_lock);
-			pr_info("%s irq already diabled\n", __func__);
 		}
 	}
 	return IRQ_HANDLED;
@@ -1657,7 +1655,7 @@ static struct device_attribute *fp_attrs[] = {
 };
 #endif
 
-static void vfsspi_work_func_debug(struct work_struct *work)
+static inline void vfsspi_work_func_debug(struct work_struct *work)
 {
 	u8 ldo_value = 0;
 
@@ -1667,14 +1665,6 @@ static void vfsspi_work_func_debug(struct work_struct *work)
 		ldo_value = (gpio_get_value(g_data->ldo_pin2) << 1)
 					| gpio_get_value(g_data->ldo_pin);
 	}
-	pr_info("%s ldo:%d,"
-		" sleep:%d, irq:%d, tz:%d, type:%s, cnt_irq:%d, adm: %d\n",
-		__func__,
-		ldo_value, gpio_get_value(g_data->sleep_pin),
-		gpio_get_value(g_data->drdy_pin),
-		g_data->tz_mode,
-		sensor_status[g_data->sensortype + 1],
-		cnt_irq, g_data->detect_mode);
 }
 
 static void vfsspi_enable_debug_timer(void)

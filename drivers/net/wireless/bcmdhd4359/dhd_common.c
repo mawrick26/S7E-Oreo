@@ -966,13 +966,6 @@ dhd_wl_ioctl(dhd_pub_t *dhd_pub, int ifidx, wl_ioctl_t *ioc, void *buf, int len)
 #endif /* DHD_LOG_DUMP */
 		DHD_LINUX_GENERAL_LOCK(dhd_pub, flags);
 		if (DHD_BUS_CHECK_DOWN_OR_DOWN_IN_PROGRESS(dhd_pub)) {
-#ifdef DHD_EFI
-			DHD_INFO(("%s: returning as busstate=%d\n",
-				__FUNCTION__, dhd_pub->busstate));
-#else
-			DHD_ERROR(("%s: returning as busstate=%d\n",
-				__FUNCTION__, dhd_pub->busstate));
-#endif /* DHD_EFI */
 			DHD_LINUX_GENERAL_UNLOCK(dhd_pub, flags);
 			dhd_os_proto_unblock(dhd_pub);
 			return -ENODEV;

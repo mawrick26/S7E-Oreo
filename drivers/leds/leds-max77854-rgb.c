@@ -145,7 +145,6 @@ static int max77854_rgb_number(struct led_classdev *led_cdev,
 
 	for (i = 0; i < 4; i++) {
 		if (led_cdev == &max77854_rgb->led[i]) {
-			pr_info("leds-max77854-rgb: %s, %d\n", __func__, i);
 			return i;
 		}
 	}
@@ -200,8 +199,6 @@ static void max77854_rgb_set_state(struct led_classdev *led_cdev,
 	int n;
 	int ret;
 
-	pr_info("leds-max77854-rgb: %s\n", __func__);
-
 	ret = max77854_rgb_number(led_cdev, &max77854_rgb);
 
 	if (IS_ERR_VALUE(ret)) {
@@ -247,8 +244,6 @@ static void max77854_rgb_set_state(struct led_classdev *led_cdev,
 			brightness = 1;
 	}
 	max77854_rgb_set(led_cdev, brightness);
-
-	pr_info("leds-max77854-rgb: %s, led_num = %d, brightness = %d\n", __func__, ret, brightness);
 
 	ret = max77854_update_reg(max77854_rgb->i2c,
 			MAX77854_RGBLED_REG_LEDEN, led_state << (2*n), 0x3 << 2*n);
@@ -305,8 +300,6 @@ static int max77854_rgb_ramp(struct device *dev, int ramp_up, int ramp_down)
 	struct max77854_rgb *max77854_rgb = dev_get_drvdata(dev);
 	int value;
 	int ret;
-
-	pr_info("leds-max77854-rgb: %s\n", __func__);
 
 	if (ramp_up <= 800) {
 		ramp_up /= 100;
@@ -646,7 +639,6 @@ static ssize_t store_max77854_rgb_pattern(struct device *dev,
 		dev_err(dev, "fail to get led_pattern mode.\n");
 		return count;
 	}
-	pr_info("leds-max77854-rgb: %s pattern=%d lowpower=%i\n", __func__, mode, led_lowpower_mode);
 
 	/* Set all LEDs Off */
 	max77854_rgb_reset(dev);

@@ -9,7 +9,6 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-#define DEBUG
 
 #include <linux/mfd/max77854-private.h>
 #if defined(CONFIG_BATTERY_NOTIFIER)
@@ -118,7 +117,6 @@ static void max77854_test_read(struct max77854_charger_data *charger)
 		max77854_read_reg(charger->i2c, addr, &data);
 		sprintf(str + strlen(str), "[0x%02x]0x%02x, ", addr, data);
 	}
-	pr_info("MAX77854 : %s\n", str);
 }
 
 #if defined(CONFIG_MAX77854_FG_SENSING_WA)
@@ -225,8 +223,6 @@ static int max77854_get_charger_state(struct max77854_charger_data *charger)
 	max77854_read_reg(charger->i2c,
 			  MAX77854_CHG_REG_DETAILS_01, &reg_data);
 
-	pr_info("%s : charger status (0x%02x)\n", __func__, reg_data);
-
 	reg_data &= 0x0f;
 
 	switch (reg_data)
@@ -264,7 +260,7 @@ static bool max77854_is_constant_current(struct max77854_charger_data *charger)
 
 	max77854_read_reg(charger->i2c,
 			  MAX77854_CHG_REG_DETAILS_01, &reg_data);
-	pr_info("%s : charger status (0x%02x)\n", __func__, reg_data);
+
 	reg_data &= 0x0f;
 
 	if (reg_data == 0x01)
@@ -285,7 +281,6 @@ static void max77854_set_float_voltage(struct max77854_charger_data *charger, in
 	        CHG_CNFG_04_CHG_CV_PRM_MASK);
 
 	max77854_read_reg(charger->i2c, MAX77854_CHG_REG_CNFG_04, &reg_data);
-	pr_info("%s: battery cv voltage 0x%x\n", __func__, reg_data);
 }
 
 static int max77854_get_float_voltage(struct max77854_charger_data *charger)
@@ -296,8 +291,6 @@ static int max77854_get_float_voltage(struct max77854_charger_data *charger)
 	max77854_read_reg(charger->i2c, MAX77854_CHG_REG_CNFG_04, &reg_data);
 	reg_data &= 0x3F;
 	float_voltage = reg_data * 125 + 40500;
-	pr_debug("%s: battery cv reg : 0x%x, float voltage val : %d\n",
-		__func__, reg_data, float_voltage);
 
 	return float_voltage;
 }
@@ -374,7 +367,6 @@ static int max77854_get_charging_health(struct max77854_charger_data *charger)
 			max77854_set_charger_state(charger, ENABLE);
 		}
 
-		pr_info("%s: vbus_state : 0x%x, chg_dtls : 0x%x\n", __func__, vbus_state, chg_dtls);
 		/*  OVP is higher priority */
 		if (vbus_state == 0x02) { /*  CHGIN_OVLO */
 			pr_info("%s: vbus ovp\n", __func__);
@@ -647,8 +639,6 @@ static void max77854_set_input_current(struct max77854_charger_data *charger,
 	}
 
 	mutex_unlock(&charger->charger_mutex);
-	pr_info("[%s] REG(0x%02x) DATA(0x%02x), CURRENT(%d)\n",
-		__func__, set_reg, reg_data, input_current);
 }
 
 static void max77854_set_charge_current(struct max77854_charger_data *charger,
@@ -669,10 +659,6 @@ static void max77854_set_charge_current(struct max77854_charger_data *charger,
 		reg_data |= (fast_charging_current / curr_step);
 		max77854_write_reg(charger->i2c,MAX77854_CHG_REG_CNFG_02, reg_data);
 	}
-
-	pr_info("[%s] REG(0x%02x) DATA(0x%02x), CURRENT(%d)\n",
-		__func__, MAX77854_CHG_REG_CNFG_02,
-		reg_data, fast_charging_current);
 }
 
 static void max77854_set_wireless_input_current(struct max77854_charger_data *charger,
