@@ -70,7 +70,6 @@ static int parse_options(struct super_block *sb, char *options, int silent,
 	opts->reserved_mb = 0;
 	/* by default, gid derivation is off */
 	opts->gid_derivation = false;
-
 	opts->default_normal = false;
 
 	*debug = 0;
