@@ -424,7 +424,7 @@ static int sx9310_set_mode(struct sx9310_p *data, unsigned char mode)
 	return ret;
 }
 
-static void sx9310_ch_interrupt_read(struct sx9310_p *data, u8 status)
+static inline void sx9310_ch_interrupt_read(struct sx9310_p *data, u8 status)
 {
 	if (status & (CSX_STATUS_REG << MAIN_SENSOR)) {
 		if (status & (BODY_STATUS_REG << (MAIN_SENSOR+1))) {
@@ -452,7 +452,6 @@ static void sx9310_set_enable(struct sx9310_p *data, int enable)
 
 	if (enable == ON) {
 		sx9310_i2c_read(data, SX9310_STAT0_REG, &status);
-		pr_info("[SX9310]: %s - enable(status : 0x%x)\n", __func__, status);
 
 		sx9310_ch_interrupt_read(data, status);
 		
