@@ -300,7 +300,6 @@ static void send_event(struct sx9310_p *data, u8 state)
 #else
 		sx9310_i2c_write(data, SX9310_CPS_CTRL8_REG, data->normal_th);
 #endif
-		pr_info("[SX9310]: %s - button touched\n", __func__);
 	} else {
 		data->state = IDLE;
 #if (MAIN_SENSOR == 1)
@@ -311,7 +310,6 @@ static void send_event(struct sx9310_p *data, u8 state)
 #else
 		sx9310_i2c_write(data, SX9310_CPS_CTRL8_REG, data->normal_th);
 #endif
-		pr_info("[SX9310]: %s - button released\n", __func__);
 	}
 
 	if (data->skip_data == true)
@@ -399,9 +397,6 @@ static void sx9310_get_data(struct sx9310_p *data)
 #endif
 	mutex_unlock(&data->read_mutex);
 
-	pr_info("[SX9310]: %s - Capmain: %d, Useful: %d, avg: %d, diff: %d, Offset: %u\n",
-		__func__, data->capmain, data->useful, data->avg,
-		data->diff, data->offset);
 #ifdef CONFIG_SENSORS_SX9310_USE_2ND_CH
 	pr_info("[SX9310]: %s - Capmain[2ch]: %d, Useful: %d, avg: %d, diff: %d, Offset: %u\n",
 		__func__, data->capmain_ch2, data->useful_ch2, data->avg_ch2,
@@ -455,8 +450,6 @@ static void sx9310_set_enable(struct sx9310_p *data, int enable)
 {
 	u8 status = 0;
 
-	pr_info("[SX9310]: %s\n", __func__);
-
 	if (enable == ON) {
 		sx9310_i2c_read(data, SX9310_STAT0_REG, &status);
 		pr_info("[SX9310]: %s - enable(status : 0x%x)\n", __func__, status);
@@ -491,7 +484,6 @@ static void sx9310_set_enable(struct sx9310_p *data, int enable)
 		enable_irq(data->irq);
 		enable_irq_wake(data->irq);
 	} else {
-		pr_info("[SX9310]: %s - disable\n", __func__);
 
 		/* disable interrupt */
  		sx9310_i2c_write(data, SX9310_IRQ_ENABLE_REG, 0x00);
@@ -1136,9 +1128,6 @@ static ssize_t sx9310_enable_store(struct device *dev,
 		pr_err("[SX9310]: %s - Invalid Argument\n", __func__);
 		return ret;
 	}
-
-	pr_info("[SX9310]: %s - new_value = %u old_value = %d\n",
-		__func__, enable, pre_enable);
 
 	if (pre_enable == enable)
 		return size;

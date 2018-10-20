@@ -148,8 +148,6 @@ static void enable_sensor(struct ssp_data *data,
 		else
 			ret = send_instruction(data, ADD_SENSOR,
 				iSensorType, uBuf, 9);
-		pr_info("[SSP], delay %d, timeout %d, flag=%d, ret%d \n",
-			dMsDelay, maxBatchReportLatency, uBuf[8], ret);
 		if (ret <= 0) {
 			uNewEnable =
 				(u64)atomic64_read(&data->aSensorEnable)
@@ -1582,8 +1580,6 @@ static long ssp_batch_ioctl(struct file *file, unsigned int cmd,
 		}
 	}
 
-	pr_info("[SSP] batch %d: delay %lld, timeout %lld, flag %d, ret %d \n",
-		sensor_type, dNewDelay, batch.timeout, batch.flag, ret);
 	if (!batch.timeout)
 		return 0;
 	if (ret <= 0)

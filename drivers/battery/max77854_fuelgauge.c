@@ -191,8 +191,6 @@ static int max77854_fg_read_vcell(struct max77854_fuelgauge_data *fuelgauge)
 
 	if (!(fuelgauge->info.pr_cnt++ % PRINT_COUNT)) {
 		fuelgauge->info.pr_cnt = 1;
-		pr_info("%s: VCELL(%d), data(0x%04x)\n",
-			__func__, vcell, (data[1]<<8) | data[0]);
 	}
 
 	if ((fuelgauge->vempty_mode == VEMPTY_MODE_SW_VALERT) && 
