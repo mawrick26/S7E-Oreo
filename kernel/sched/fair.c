@@ -5102,7 +5102,7 @@ static inline int hmp_family_boost(struct task_struct *p)
 static unsigned int hmp_up_migration(int cpu, int *target_cpu, struct sched_entity *se);
 static unsigned int hmp_down_migration(int cpu, struct sched_entity *se);
 static inline unsigned int hmp_domain_min_load(struct hmp_domain *hmpd,
-						int *min_cpu, struct cpumask *affinity);
+						int *min_cpu, const struct cpumask *affinity);
 
 /* Check if cpu is in fastest hmp_domain */
 static inline unsigned int hmp_cpu_is_fastest(int cpu)
@@ -5847,7 +5847,7 @@ late_initcall(hmp_attr_init);
  *	+ if affinity is not set, cpu_online_mask is used
  */
 static inline unsigned int hmp_domain_min_load(struct hmp_domain *hmpd,
-						int *min_cpu, struct cpumask *affinity)
+						int *min_cpu, const struct cpumask *affinity)
 {
 	int cpu;
 	int min_cpu_runnable_temp = NR_CPUS;
