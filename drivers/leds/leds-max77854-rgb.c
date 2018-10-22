@@ -262,8 +262,6 @@ static unsigned int max77854_rgb_get(struct led_classdev *led_cdev)
 	int ret;
 	u8 value;
 
-	pr_info("leds-max77854-rgb: %s\n", __func__);
-
 	ret = max77854_rgb_number(led_cdev, &max77854_rgb);
 	if (IS_ERR_VALUE(ret)) {
 		dev_err(led_cdev->dev,
@@ -596,8 +594,6 @@ static ssize_t store_max77854_rgb_lowpower(struct device *dev,
 
 	led_lowpower_mode = led_lowpower;
 
-	pr_info("leds-max77854-rgb: led_lowpower mode set to %i\n", led_lowpower);
-
 	return count;
 }
 static ssize_t store_max77854_rgb_brightness(struct device *dev,
@@ -781,9 +777,6 @@ static ssize_t store_max77854_rgb_blink(struct device *dev,
 
 	/*Set LED blink mode*/
 	max77854_rgb_blink(dev, delay_on_time, delay_off_time);
-
-	pr_info("leds-max77854-rgb: %s, delay_on_time: %d, delay_off_time: %d, color: 0x%x, lowpower: %i\n", 
-			__func__, delay_on_time, delay_off_time, led_brightness, led_lowpower_mode);
 
 	return count;
 }
