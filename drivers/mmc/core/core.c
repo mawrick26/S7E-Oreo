@@ -52,11 +52,8 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(mmc_blk_erase_start);
 EXPORT_TRACEPOINT_SYMBOL_GPL(mmc_blk_erase_end);
 EXPORT_TRACEPOINT_SYMBOL_GPL(mmc_blk_rw_start);
 EXPORT_TRACEPOINT_SYMBOL_GPL(mmc_blk_rw_end);
- #ifdef CONFIG_MMC_SUPPORT_STLOG
- #include <linux/stlog.h>
- #else
- #define ST_LOG(fmt,...)
- #endif
+
+#define ST_LOG(fmt,...)
 
 /* If the device is not responding */
 #define MMC_CORE_TIMEOUT_MS	(10 * 60 * 1000) /* 10 minute timeout */
