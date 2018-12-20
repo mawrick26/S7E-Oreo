@@ -513,10 +513,6 @@ void report_prox_alert_data(struct ssp_data *data, struct sensor_value *prox_ale
 	ts_high = (u32)((prox_alert_data->timestamp)>>32);
 	ts_low = (u32)((prox_alert_data->timestamp)&0x00000000ffffffff);
 	
-	ssp_dbg("[SSP] Proximity alert Sensor Detect : %d, raw : %u ts : %llu %d %d\n",
-		prox_alert_data->prox_alert_detect, prox_alert_data->prox_alert_adc,
-		prox_alert_data->timestamp, ts_high, ts_low);
-
 	data->buf[PROXIMITY_ALERT_SENSOR].prox_alert_detect = prox_alert_data->prox_alert_detect;
 	data->buf[PROXIMITY_ALERT_SENSOR].prox_alert_adc = prox_alert_data->prox_alert_adc;
 

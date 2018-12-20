@@ -204,9 +204,6 @@ static void change_sensor_delay(struct ssp_data *data,
 			== get_msdelay(data->adDelayBuf[iSensorType]))
 			break;
 
-		ssp_dbg("[SSP]: %s - Change %llu, New = %lldns\n",
-			__func__, 1ULL << iSensorType, dNewDelay);
-
 		memcpy(&uBuf[0], &dMsDelay, 4);
 		memcpy(&uBuf[4], &maxBatchReportLatency, 4);
 		uBuf[8] = batchOptions;

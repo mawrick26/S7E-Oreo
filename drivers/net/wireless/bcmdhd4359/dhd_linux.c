@@ -4928,8 +4928,6 @@ dhd_start_xmit(struct sk_buff *skb, struct net_device *net)
 	unsigned long flags;
 	uint8 htsfdlystat_sz = 0;
 
-	DHD_TRACE(("%s: Enter\n", __FUNCTION__));
-
 	if (dhd_query_bus_erros(&dhd->pub)) {
 		return -ENODEV;
 	}

@@ -1073,35 +1073,6 @@ dhd_wl_ioctl(dhd_pub_t *dhd_pub, int ifidx, wl_ioctl_t *ioc, void *buf, int len)
 		DHD_LINUX_GENERAL_UNLOCK(dhd_pub, flags);
 
 		dhd_os_proto_unblock(dhd_pub);
-
-		if (ret < 0) {
-			if ((ioc->cmd == WLC_GET_VAR || ioc->cmd == WLC_SET_VAR) &&
-					buf != NULL) {
-				if (ret == BCME_UNSUPPORTED || ret == BCME_NOTASSOCIATED) {
-					DHD_ERROR(("%s: %s: %s, %s\n",
-						__FUNCTION__, ioc->cmd == WLC_GET_VAR ?
-						"WLC_GET_VAR" : "WLC_SET_VAR",
-						(char *)buf,
-						ret == BCME_UNSUPPORTED ? "UNSUPPORTED"
-						: "NOT ASSOCIATED"));
-				} else {
-					DHD_ERROR(("%s: %s: %s, ret = %d\n",
-						__FUNCTION__, ioc->cmd == WLC_GET_VAR ?
-						"WLC_GET_VAR" : "WLC_SET_VAR",
-						(char *)buf, ret));
-				}
-			} else {
-				if (ret == BCME_UNSUPPORTED || ret == BCME_NOTASSOCIATED) {
-					DHD_ERROR(("%s: WLC_IOCTL: cmd: %d, %s\n",
-						__FUNCTION__, ioc->cmd,
-						ret == BCME_UNSUPPORTED ? "UNSUPPORTED" :
-						"NOT ASSOCIATED"));
-				} else {
-					DHD_ERROR(("%s: WLC_IOCTL: cmd: %d, ret = %d\n",
-						__FUNCTION__, ioc->cmd, ret));
-				}
-			}
-		}
 	}
 
 	return ret;

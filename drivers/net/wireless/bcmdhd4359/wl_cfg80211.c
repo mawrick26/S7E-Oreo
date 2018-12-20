@@ -16052,7 +16052,6 @@ static s32 wl_escan_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 			if (cfg->afx_hdl->peer_chan == WL_INVALID)
 				complete(&cfg->act_frm_scan);
 		} else if ((likely(cfg->scan_request)) || (cfg->sched_scan_running)) {
-			WL_INFORM(("ESCAN ABORTED\n"));
 			cfg->bss_list = wl_escan_get_buf(cfg, TRUE);
 #ifdef DUAL_ESCAN_RESULT_BUFFER
 			if (escan_result->sync_id != cfg->escan_info.cur_sync_id) {
@@ -16093,18 +16092,12 @@ static s32 wl_escan_handler(struct bcm_cfg80211 *cfg, bcm_struct_cfgdev *cfgdev,
 		wl_escan_print_sync_id(status, escan_result->sync_id,
 			cfg->escan_info.cur_sync_id);
 		if (wl_get_drv_status_all(cfg, FINDING_COMMON_CHANNEL)) {
-			WL_INFORM(("ACTION FRAME SCAN DONE\n"));
 			wl_clr_p2p_status(cfg, SCANNING);
 			wl_clr_drv_status(cfg, SCANNING, cfg->afx_hdl->dev);
 			if (cfg->afx_hdl->peer_chan == WL_INVALID)
 				complete(&cfg->act_frm_scan);
 		} else if ((likely(cfg->scan_request)) || (cfg->sched_scan_running)) {
 			cfg->bss_list = wl_escan_get_buf(cfg, TRUE);
-			if (!scan_req_match(cfg)) {
-				WL_TRACE_HW4(("SCAN ABORTED(UNEXPECTED): "
-					"scanned AP count=%d\n",
-					cfg->bss_list->count));
-			}
 			wl_inform_bss(cfg);
 			wl_notify_escan_complete(cfg, ndev, true, false);
 		}
