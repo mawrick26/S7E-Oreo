@@ -33,7 +33,7 @@
 
 #ifdef DEBUG
 #define mc_dev_devel(fmt, ...) \
-	dev_info(g_ctx.mcd, "%s: " fmt, __func__, ##__VA_ARGS__)
+	do {} while (0)
 #else /* DEBUG */
 #define mc_dev_devel(...)		do {} while (0)
 #endif /* !DEBUG */

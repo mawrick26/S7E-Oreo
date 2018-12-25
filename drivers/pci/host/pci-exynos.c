@@ -471,7 +471,7 @@ retry:
 		} else {
 			gpio_set_value(exynos_pcie->perst_gpio, 0);
 
-            /* LTSSM disable */
+            	/* LTSSM disable */
 			exynos_elb_writel(exynos_pcie, PCIE_ELBI_LTSSM_DISABLE,
 					PCIE_APP_LTSSM_ENABLE);
 			exynos_pcie_phy_clock_enable(pp, 0);
@@ -533,7 +533,7 @@ static void exynos_pcie_assert_phy_reset(struct pcie_port *pp)
 
 	exynos_pcie_phy_config(exynos_pcie->phy_base, exynos_pcie->phy_pcs_base,
 				exynos_pcie->block_base, exynos_pcie->elbi_base, exynos_pcie->ch_num);
-    exynos_pcie_phy_clock_enable(&exynos_pcie->pp, 1);
+    	exynos_pcie_phy_clock_enable(&exynos_pcie->pp, 1);
 
 	/* Bus number enable */
 	val = exynos_elb_readl(exynos_pcie, PCIE_SW_WAKE);
@@ -1000,7 +1000,7 @@ static void exynos_pcie_resumed_phydown(struct pcie_port *pp)
 	u32 val;
 
 	/* phy all power down on wifi off during suspend/resume */
-    exynos_pcie_clock_enable(pp, 1);
+    	exynos_pcie_clock_enable(pp, 1);
 	exynos_pcie_enable_interrupts(pp);
 	regmap_update_bits(exynos_pcie->pmureg,
 			   PCIE_PHY_CONTROL + exynos_pcie->ch_num * 4,
@@ -1200,8 +1200,6 @@ void exynos_pcie_poweroff(int ch_num)
 #endif
 	}
 
-	dev_info(pp->dev, "%s, end of poweroff, pcie state: %d\n",  __func__,
-		 exynos_pcie->state);
 }
 EXPORT_SYMBOL(exynos_pcie_poweroff);
 
