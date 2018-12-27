@@ -252,6 +252,14 @@ config HALL_M1120
 	help
 	  Enable Hall M1120 Feature
 
+config INPUT_BOOSTER
+	bool "Samsung input boost"
+	default n
+	help
+	  Enable the Samsung built-in input boost that acts on
+	  mouse, keyboard, touch (only on sec_ts), and more
+	  input factors.
+
 comment "Input Device Drivers"
 
 source "drivers/input/keyboard/Kconfig"
