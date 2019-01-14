@@ -190,10 +190,8 @@ enum {
 #define MSG2SSP_INST_LIB_NOTI		0xB4
 #define MSG2SSP_INST_VDIS_FLAG		0xB5
 #define MSG2SSP_INST_LIB_DATA		0xC1
-#if ANDROID_VERSION >= 80000
 #define MSG2SSP_INST_CURRENT_TIMESTAMP	0xa7
 #define MSG2AP_INST_TIMESTAMP_OFFSET	0xa8
-#endif
 #define MSG2SSP_AP_MCU_SET_GYRO_CAL		0xCD
 #define MSG2SSP_AP_MCU_SET_ACCEL_CAL		0xCE
 #define MSG2SSP_AP_STATUS_SHUTDOWN		0xD0
@@ -554,15 +552,9 @@ struct sensor_value {
 extern struct class *sensors_event_class;
 
 struct calibraion_data {
-#if ANDROID_VERSION < 80000
-	s16 x;
-	s16 y;
-	s16 z;
-#else
 	s32 x;
 	s32 y;
 	s32 z;
-#endif
 };
 
 struct grip_calibration_data {
@@ -1075,11 +1067,7 @@ int mag_store_hwoffset(struct ssp_data *);
 int set_hw_offset(struct ssp_data *);
 int get_hw_offset(struct ssp_data *);
 int set_gyro_cal(struct ssp_data *);
-#if ANDROID_VERSION < 80000
-int save_gyro_caldata(struct ssp_data *, s16 *);
-#else
 int save_gyro_caldata(struct ssp_data *, s32 *);
-#endif
 int set_accel_cal(struct ssp_data *);
 int initialize_magnetic_sensor(struct ssp_data *data);
 int set_sensor_position(struct ssp_data *);
@@ -1148,11 +1136,9 @@ void report_shake_cam_data(struct ssp_data *, struct sensor_value *);
 void report_bulk_comp_data(struct ssp_data *data);
 void report_tilt_data(struct ssp_data *, struct sensor_value *);
 void report_pickup_data(struct ssp_data *, struct sensor_value *);
-#if ANDROID_VERSION >= 80000
 void report_light_cct_data(struct ssp_data *data, struct sensor_value *lightdata);
 void report_scontext_data(struct ssp_data *data, struct sensor_value *scontextbuf);
 void report_uncalib_accel_data(struct ssp_data *data, struct sensor_value *acceldata);
-#endif
 unsigned int get_module_rev(struct ssp_data *data);
 void reset_mcu(struct ssp_data *);
 void convert_acc_data(s16 *);
@@ -1182,9 +1168,7 @@ void ssp_temp_task(struct work_struct *work);
 
 int callback_bbd_on_control(void *ssh_data, const char *str_ctrl);
 int callback_bbd_on_mcu_ready(void *ssh_data, bool ready);
-#if ANDROID_VERSION >= 70000
 int callback_bbd_on_packet(void *ssh_data, const char *buf, size_t size);
-#endif
 int callback_bbd_on_packet_alarm(void *ssh_data);
 int callback_bbd_on_mcu_reset(void *ssh_data);
 void bbd_on_packet_work_func(struct work_struct *work);

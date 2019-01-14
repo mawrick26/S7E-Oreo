@@ -304,11 +304,7 @@ out:
 
 static bbd_callbacks ssp_bbd_callbacks = {
 // on_packet call-back func is used after N OS, drivers devided workqueue merge as one 
-#if ANDROID_VERSION < 70000
-	.on_packet       = NULL,
-#else
 	.on_packet       = callback_bbd_on_packet,
-#endif
 	.on_packet_alarm = callback_bbd_on_packet_alarm,
 	.on_control      = callback_bbd_on_control,
 	.on_mcu_ready    = callback_bbd_on_mcu_ready,
@@ -644,7 +640,6 @@ void ssp_motor_work_func(struct work_struct *work)
 }
 #endif
 
-#if ANDROID_VERSION >= 80000
 void ssp_timestamp_sync_work_func(struct work_struct *work)
 {
 	struct ssp_data *data = container_of((struct delayed_work *)work,
@@ -662,7 +657,6 @@ void ssp_timestamp_sync_work_func(struct work_struct *work)
 	ssp_spi_sync(data, msg, 1000);
 	//pr_info("[SSP] %s : Motor state %d, iRet %d\n",__func__, data->motor_state, iRet);
 }
-#endif
 
 void ssp_reset_work_func(struct work_struct *work)
 {
@@ -878,10 +872,8 @@ static int ssp_probe(struct spi_device *spi)
 	
 	INIT_WORK(&data->work_ssp_motor, ssp_motor_work_func);
 #endif
-#if ANDROID_VERSION >= 80000
 	INIT_DELAYED_WORK(&data->work_ssp_tiemstamp_sync, ssp_timestamp_sync_work_func);
-#endif
-        INIT_DELAYED_WORK(&data->work_ssp_reset, ssp_reset_work_func);
+	INIT_DELAYED_WORK(&data->work_ssp_reset, ssp_reset_work_func);
 	goto exit;
 
 #ifdef CONFIG_SSP_MOTOR

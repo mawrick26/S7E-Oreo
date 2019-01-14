@@ -223,12 +223,8 @@ int print_mcu_debug(char *pchRcvDataFrame, int *pDataIdx,
 {
 	int iLength = 0;
 	int cur = *pDataIdx;
-#if ANDROID_VERSION < 80000
-	iLength = pchRcvDataFrame[(*pDataIdx)++];
-#else
 	memcpy(&iLength, pchRcvDataFrame + *pDataIdx, sizeof(u16));
 	*pDataIdx += sizeof(u16);
-#endif
 
 	if (iLength > iRcvDataFrameLength - *pDataIdx || iLength <= 0) {
 		ssp_dbg("[SSP]: MSG From MCU - invalid debug length(%d/%d/%d)\n",
@@ -304,9 +300,6 @@ void sync_sensor_state(struct ssp_data *data)
 
 	set_proximity_threshold(data);
 	set_light_coef(data);
-#if ANDROID_VERSION < 80000
-	set_gyro_cal_lib_enable(data, true);
-#endif
 	data->bMcuDumpMode = ssp_check_sec_dump_mode();
 	iRet = ssp_send_cmd(data, MSG2SSP_AP_MCU_SET_DUMPMODE,
 		data->bMcuDumpMode);
@@ -376,7 +369,6 @@ static void print_sensordata(struct ssp_data *data, unsigned int uSensor)
 		ssp_dbg("[SSP] %u : %u, (%ums)\n", uSensor,
 			data->buf[uSensor].light_flicker, get_msdelay(data->adDelayBuf[uSensor]));
 		break;
-#if ANDROID_VERSION >= 80000
 	case LIGHT_CCT_SENSOR:
 		ssp_dbg("[SSP] %u : %u, %u, %u, %u, %u, %u (%ums)\n", uSensor,
 			data->buf[uSensor].r, data->buf[uSensor].g,
@@ -384,7 +376,6 @@ static void print_sensordata(struct ssp_data *data, unsigned int uSensor)
 			data->buf[uSensor].a_time, data->buf[uSensor].a_gain,
 			get_msdelay(data->adDelayBuf[uSensor]));
 		break;
-#endif
 	case PROXIMITY_SENSOR:
 		ssp_dbg("[SSP] %u : %d, %d (%ums)\n", uSensor,
 			data->buf[uSensor].prox_detect, data->buf[uSensor].prox_adc,
@@ -446,7 +437,6 @@ static void print_sensordata(struct ssp_data *data, unsigned int uSensor)
 			data->buf[uSensor].pickup_gesture,
 			get_msdelay(data->adDelayBuf[uSensor]));
 		break;
-#if ANDROID_VERSION >= 80000
 	case ACCEL_UNCALIB_SENSOR:
 		ssp_dbg("[SSP] %u : %d, %d, %d, %d, %d, %d (%ums)\n", uSensor,
 			data->buf[uSensor].uncal_x, data->buf[uSensor].uncal_y,
@@ -455,7 +445,6 @@ static void print_sensordata(struct ssp_data *data, unsigned int uSensor)
 			data->buf[uSensor].offset_z,
 			get_msdelay(data->adDelayBuf[uSensor]));
 		break;
-#endif
 	case BULK_SENSOR:
 	case GPS_SENSOR:
 		break;
@@ -538,13 +527,6 @@ static void debug_work_func(struct work_struct *work)
 
 exit:
 	data->uIrqCnt = 0;
-#if ANDROID_VERSION < 80000
-	if(data->gyro_lib_state == GYRO_CALIBRATION_STATE_EVENT_OCCUR)
-		set_gyro_cal_lib_enable(data, false);
-
-	if(data->sensor_dump_flag_proximity == true || data->sensor_dump_flag_light == true)
-		send_sensor_dump_command(data,PROXIMITY_SENSOR);
-#endif
 }
 
 static void debug_timer_func(unsigned long ptr)

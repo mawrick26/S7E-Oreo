@@ -812,30 +812,6 @@ static ssize_t set_pressure_delay(struct device *dev,
 	return size;
 }
 
-#if ANDROID_VERSION < 80000
-static ssize_t show_gesture_delay(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-	struct ssp_data *data = dev_get_drvdata(dev);
-
-	return sprintf(buf, "%lld\n", data->adDelayBuf[GESTURE_SENSOR]);
-}
-
-static ssize_t set_gesture_delay(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t size)
-{
-	int64_t dNewDelay;
-	struct ssp_data *data = dev_get_drvdata(dev);
-
-	if (kstrtoll(buf, 10, &dNewDelay) < 0)
-		return -EINVAL;
-
-	change_sensor_delay(data, GESTURE_SENSOR, dNewDelay);
-
-	return size;
-}
-#endif
-
 static ssize_t show_light_delay(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -921,30 +897,6 @@ static ssize_t set_prox_delay(struct device *dev,
 	change_sensor_delay(data, PROXIMITY_SENSOR, dNewDelay);
 	return size;
 }
-
-#if ANDROID_VERSION < 80000
-static ssize_t show_temp_humi_delay(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-	struct ssp_data *data  = dev_get_drvdata(dev);
-
-	return sprintf(buf, "%lld\n",
-		data->adDelayBuf[TEMPERATURE_HUMIDITY_SENSOR]);
-}
-
-static ssize_t set_temp_humi_delay(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t size)
-{
-	int64_t dNewDelay;
-	struct ssp_data *data  = dev_get_drvdata(dev);
-
-	if (kstrtoll(buf, 10, &dNewDelay) < 0)
-		return -EINVAL;
-
-	change_sensor_delay(data, TEMPERATURE_HUMIDITY_SENSOR, dNewDelay);
-	return size;
-}
-#endif
 
 static ssize_t show_tilt_delay(struct device *dev,
 	struct device_attribute *attr, char *buf)
@@ -1465,42 +1417,6 @@ static DEVICE_ATTR(tilt_poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
 	show_tilt_delay, set_tilt_delay);
 static DEVICE_ATTR(pickup_poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
 	show_pickup_delay, set_pickup_delay);
-#if ANDROID_VERSION < 80000
-static struct device_attribute dev_attr_gesture_poll_delay
-	= __ATTR(poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
-	show_gesture_delay, set_gesture_delay);
-static struct device_attribute dev_attr_light_poll_delay
-	= __ATTR(poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
-	show_light_delay, set_light_delay);
-#ifdef CONFIG_SENSORS_SSP_IRDATA_FOR_CAMERA
-static struct device_attribute dev_attr_light_ir_poll_delay
-	= __ATTR(poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
-	show_light_ir_delay, set_light_ir_delay);
-#endif
-static struct device_attribute dev_attr_light_flicker_poll_delay
-	= __ATTR(poll_delay, 0664,
-	show_light_flicker_delay, set_light_flicker_delay);
-#ifdef CONFIG_SENSORS_SSP_INTERRUPT_GYRO_SENSOR
-static struct device_attribute dev_attr_interrupt_gyro_poll_delay
-	= __ATTR(poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
-	show_interrupt_gyro_delay, set_interrupt_gyro_delay);
-#endif
-static struct device_attribute dev_attr_prox_poll_delay
-	= __ATTR(poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
-	show_prox_delay, set_prox_delay);
-static struct device_attribute dev_attr_temp_humi_poll_delay
-	= __ATTR(poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
-	show_temp_humi_delay, set_temp_humi_delay);
-static struct device_attribute dev_attr_sig_motion_poll_delay
-	= __ATTR(poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
-	show_sig_motion_delay, set_sig_motion_delay);
-static struct device_attribute dev_attr_step_cnt_poll_delay
-	= __ATTR(poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
-	show_step_cnt_delay, set_step_cnt_delay);
-static struct device_attribute dev_attr_prox_alert_poll_delay
-	= __ATTR(poll_delay, 0664,
-	show_prox_alert_delay, set_prox_alert_delay);
-#else
 static struct device_attribute dev_attr_light_poll_delay
 	= __ATTR(light_poll_delay, 0664, show_light_delay, set_light_delay);
 #ifdef CONFIG_SENSORS_SSP_IRDATA_FOR_CAMERA
@@ -1521,7 +1437,6 @@ static struct device_attribute dev_attr_step_cnt_poll_delay
 	= __ATTR(step_cnt_poll_delay, 0664, show_step_cnt_delay, set_step_cnt_delay);
 static struct device_attribute dev_attr_prox_alert_poll_delay
 	= __ATTR(prox_alert_poll_delay, 0664, show_prox_alert_delay, set_prox_alert_delay);
-#endif
 
 // for data injection
 static DEVICE_ATTR(data_injection_enable, S_IRUGO | S_IWUSR | S_IWGRP,
@@ -1566,7 +1481,6 @@ static struct device_attribute *mcu_attrs[] = {
 	&dev_attr_pickup_poll_delay,
 	&dev_attr_ssp_flush,
 	&dev_attr_shake_cam,
-#if ANDROID_VERSION >= 80000
 	&dev_attr_light_poll_delay,
 	&dev_attr_light_ir_poll_delay,
 	&dev_attr_light_flicker_poll_delay,
@@ -1575,7 +1489,6 @@ static struct device_attribute *mcu_attrs[] = {
 	&dev_attr_sig_motion_poll_delay,
 	&dev_attr_step_cnt_poll_delay,
 	&dev_attr_prox_alert_poll_delay,
-#endif
 	&dev_attr_data_injection_enable,
 #if defined (CONFIG_SENSORS_SSP_VLTE)
 	&dev_attr_lcd_check_fold_state,
@@ -1834,48 +1747,7 @@ int initialize_sysfs(struct ssp_data *data)
 			device_create_file(&data->indio_dev[i]->dev, &dev_attr_poll_delay);
 		}
 	}
-#if ANDROID_VERSION < 80000
-	if (device_create_file(&data->gesture_input_dev->dev,
-		&dev_attr_gesture_poll_delay))
-		goto err_gesture_input_dev;
 
-	if (device_create_file(&data->light_flicker_input_dev->dev,
-		&dev_attr_light_flicker_poll_delay))
-		goto err_light_flicker_input_dev;
-
-	if (device_create_file(&data->light_input_dev->dev,
-		&dev_attr_light_poll_delay))
-		goto err_light_input_dev;
-#ifdef CONFIG_SENSORS_SSP_IRDATA_FOR_CAMERA
-	if (device_create_file(&data->light_ir_input_dev->dev,
-		&dev_attr_light_ir_poll_delay))
-		goto err_light_ir_input_dev;
-#endif
-#ifdef CONFIG_SENSORS_SSP_INTERRUPT_GYRO_SENSOR
-	if (device_create_file(&data->interrupt_gyro_input_dev->dev,
-		&dev_attr_interrupt_gyro_poll_delay))
-		goto err_interrupt_gyro_input_dev;
-#endif
-	if (device_create_file(&data->prox_input_dev->dev,
-		&dev_attr_prox_poll_delay))
-		goto err_prox_input_dev;
-
-	if (device_create_file(&data->temp_humi_input_dev->dev,
-		&dev_attr_temp_humi_poll_delay))
-		goto err_temp_humi_input_dev;
-
-	if (device_create_file(&data->sig_motion_input_dev->dev,
-		&dev_attr_sig_motion_poll_delay))
-		goto err_sig_motion_input_dev;
-
-	if (device_create_file(&data->step_cnt_input_dev->dev,
-		&dev_attr_step_cnt_poll_delay))
-		goto err_step_cnt_input_dev;
-
-	if (device_create_file(&data->prox_alert_input_dev->dev,
-		&dev_attr_prox_alert_poll_delay))
-		goto err_prox_alert_input_dev;
-#endif
 	data->batch_io_device.minor = MISC_DYNAMIC_MINOR;
 	data->batch_io_device.name = "batch_io";
 	data->batch_io_device.fops = &ssp_batch_fops;
@@ -1923,75 +1795,13 @@ err_ssp_data_injection_device:
 	ssp_batch_fops.unlocked_ioctl = NULL;
 	misc_deregister(&data->batch_io_device);
 err_batch_io_dev:
-#if ANDROID_VERSION < 80000
-	device_remove_file(&data->prox_alert_input_dev->dev,
-		&dev_attr_prox_alert_poll_delay);
-err_prox_alert_input_dev:
-	device_remove_file(&data->step_cnt_input_dev->dev,
-		&dev_attr_step_cnt_poll_delay);
-err_step_cnt_input_dev:
-	device_remove_file(&data->sig_motion_input_dev->dev,
-		&dev_attr_sig_motion_poll_delay);
-err_sig_motion_input_dev:
-	device_remove_file(&data->temp_humi_input_dev->dev,
-		&dev_attr_temp_humi_poll_delay);
-err_temp_humi_input_dev:
-	device_remove_file(&data->prox_input_dev->dev,
-		&dev_attr_prox_poll_delay);
-err_prox_input_dev:
-#ifdef CONFIG_SENSORS_SSP_INTERRUPT_GYRO_SENSOR
-    device_remove_file(&data->interrupt_gyro_input_dev->dev,
-        &dev_attr_interrupt_gyro_poll_delay);
-err_interrupt_gyro_input_dev:
-#endif
-#ifdef CONFIG_SENSORS_SSP_IRDATA_FOR_CAMERA
-	device_remove_file(&data->light_ir_input_dev->dev,
-		&dev_attr_light_ir_poll_delay);
-err_light_ir_input_dev:
-#endif
-	device_remove_file(&data->light_flicker_input_dev->dev,
-		&dev_attr_light_flicker_poll_delay);
-err_light_flicker_input_dev:
-	device_remove_file(&data->light_input_dev->dev,
-		&dev_attr_light_poll_delay);
-err_light_input_dev:
-	device_remove_file(&data->gesture_input_dev->dev,
-		&dev_attr_gesture_poll_delay);
-err_gesture_input_dev:
-#endif
+
 	pr_err("[SSP] error init sysfs\n");
 	return ERROR;
 }
 
 void remove_sysfs(struct ssp_data *data)
 {
-#if ANDROID_VERSION < 80000
-	device_remove_file(&data->gesture_input_dev->dev,
-		&dev_attr_gesture_poll_delay);
-	device_remove_file(&data->light_input_dev->dev,
-		&dev_attr_light_poll_delay);
-#ifdef CONFIG_SENSORS_SSP_IRDATA_FOR_CAMERA
-	device_remove_file(&data->light_ir_input_dev->dev,
-		&dev_attr_light_ir_poll_delay);
-#endif
-#ifdef CONFIG_SENSORS_SSP_INTERRUPT_GYRO_SENSOR
-	device_remove_file(&data->interrupt_gyro_input_dev->dev,
-		&dev_attr_interrupt_gyro_poll_delay);
-#endif
-	device_remove_file(&data->light_flicker_input_dev->dev,
-		&dev_attr_light_flicker_poll_delay);
-	device_remove_file(&data->prox_input_dev->dev,
-		&dev_attr_prox_poll_delay);
-	device_remove_file(&data->temp_humi_input_dev->dev,
-		&dev_attr_temp_humi_poll_delay);
-	device_remove_file(&data->sig_motion_input_dev->dev,
-		&dev_attr_sig_motion_poll_delay);
-	device_remove_file(&data->step_cnt_input_dev->dev,
-		&dev_attr_step_cnt_poll_delay);
-	ssp_batch_fops.unlocked_ioctl = NULL;
-	device_remove_file(&data->prox_alert_input_dev->dev,
-		&dev_attr_prox_alert_poll_delay);
-#endif
 	misc_deregister(&data->batch_io_device);
 
 	ssp_data_injection_fops.write = NULL;
