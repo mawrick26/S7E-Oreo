@@ -61,13 +61,8 @@ void report_meta_data(struct ssp_data *data, struct sensor_value *s)
 		memset(gyro_buf, 0, sizeof(int) * 3);
 		ssp_push_iio_buffer(data->gyro_indio_dev, 0, (u8*)gyro_buf, sizeof(gyro_buf));
 	} else if (s->meta_data.sensor == GYRO_UNCALIB_SENSOR) {
-#if ANDROID_VERSION < 80000	
-		s16 uncal_gyro_buf[6];
-		memset(uncal_gyro_buf, 0, sizeof(s16) * 6);
-#else		
 		s32 uncal_gyro_buf[6];
 		memset(uncal_gyro_buf, 0, sizeof(s32) * 6);
-#endif
 		ssp_push_iio_buffer(data->uncal_gyro_indio_dev,	0, (u8*)uncal_gyro_buf, sizeof(uncal_gyro_buf));
 	} else if (s->meta_data.sensor == GEOMAGNETIC_SENSOR) {
 		u8 mag_buf[7];
@@ -137,25 +132,6 @@ void report_gyro_data(struct ssp_data *data, struct sensor_value *gyrodata)
 {
 	int lTemp[3] = {0,};
 
-#if ANDROID_VERSION < 80000
-	data->buf[GYROSCOPE_SENSOR].x = gyrodata->x;
-	data->buf[GYROSCOPE_SENSOR].y = gyrodata->y;
-	data->buf[GYROSCOPE_SENSOR].z = gyrodata->z;
-	
-	if (data->uGyroDps == GYROSCOPE_DPS500) {
-		lTemp[0] = (int)data->buf[GYROSCOPE_SENSOR].x >> 2;
-		lTemp[1] = (int)data->buf[GYROSCOPE_SENSOR].y >> 2;
-		lTemp[2] = (int)data->buf[GYROSCOPE_SENSOR].z >> 2;
-	} else if (data->uGyroDps == GYROSCOPE_DPS250) {
-		lTemp[0] = (int)data->buf[GYROSCOPE_SENSOR].x >> 3;
-		lTemp[1] = (int)data->buf[GYROSCOPE_SENSOR].y >> 3;
-		lTemp[2] = (int)data->buf[GYROSCOPE_SENSOR].z >> 3;
-	} else {
-		lTemp[0] = (int)data->buf[GYROSCOPE_SENSOR].x;
-		lTemp[1] = (int)data->buf[GYROSCOPE_SENSOR].y;
-		lTemp[2] = (int)data->buf[GYROSCOPE_SENSOR].z;
-	}
-#else
 data->buf[GYROSCOPE_SENSOR].gyro.x = gyrodata->gyro.x;
 	data->buf[GYROSCOPE_SENSOR].gyro.y = gyrodata->gyro.y;
 	data->buf[GYROSCOPE_SENSOR].gyro.z = gyrodata->gyro.z;
@@ -173,38 +149,12 @@ data->buf[GYROSCOPE_SENSOR].gyro.x = gyrodata->gyro.x;
 		lTemp[1] = (int)data->buf[GYROSCOPE_SENSOR].gyro.y;
 		lTemp[2] = (int)data->buf[GYROSCOPE_SENSOR].gyro.z;
 	}
-#endif
 	ssp_push_iio_buffer(data->gyro_indio_dev, gyrodata->timestamp, (u8*)lTemp, sizeof(lTemp));
 }
 
 #ifdef CONFIG_SENSORS_SSP_INTERRUPT_GYRO_SENSOR
 void report_interrupt_gyro_data(struct ssp_data *data, struct sensor_value *gyrodata)
 {
-#if ANDROID_VERSION < 80000
-	int lTemp[3] = {0,};
-
-	data->buf[INTERRUPT_GYRO_SENSOR].x = gyrodata->x;
-	data->buf[INTERRUPT_GYRO_SENSOR].y = gyrodata->y;
-	data->buf[INTERRUPT_GYRO_SENSOR].z = gyrodata->z;
-
-	if (data->uGyroDps == GYROSCOPE_DPS500) {
-		lTemp[0] = (int)data->buf[INTERRUPT_GYRO_SENSOR].x >> 2;
-		lTemp[1] = (int)data->buf[INTERRUPT_GYRO_SENSOR].y >> 2;
-		lTemp[2] = (int)data->buf[INTERRUPT_GYRO_SENSOR].z >> 2;
-	} else if (data->uGyroDps == GYROSCOPE_DPS250) {
-		lTemp[0] = (int)data->buf[INTERRUPT_GYRO_SENSOR].x >> 3;
-		lTemp[1] = (int)data->buf[INTERRUPT_GYRO_SENSOR].y >> 3;
-		lTemp[2] = (int)data->buf[INTERRUPT_GYRO_SENSOR].z >> 3;
-	} else {
-		lTemp[0] = (int)data->buf[INTERRUPT_GYRO_SENSOR].x;
-		lTemp[1] = (int)data->buf[INTERRUPT_GYRO_SENSOR].y;
-		lTemp[2] = (int)data->buf[INTERRUPT_GYRO_SENSOR].z;
-	}
-
-	input_report_rel(data->interrupt_gyro_input_dev, REL_RX, data->buf[INTERRUPT_GYRO_SENSOR].x);
-	input_report_rel(data->interrupt_gyro_input_dev, REL_RY, data->buf[INTERRUPT_GYRO_SENSOR].y);
-	input_report_rel(data->interrupt_gyro_input_dev, REL_RZ, data->buf[INTERRUPT_GYRO_SENSOR].z);
-#else
 	data->buf[INTERRUPT_GYRO_SENSOR].gyro.x = gyrodata->gyro.x;
 	data->buf[INTERRUPT_GYRO_SENSOR].gyro.y = gyrodata->gyro.y;
 	data->buf[INTERRUPT_GYRO_SENSOR].gyro.z = gyrodata->gyro.z;
@@ -212,7 +162,6 @@ void report_interrupt_gyro_data(struct ssp_data *data, struct sensor_value *gyro
 	input_report_rel(data->interrupt_gyro_input_dev, REL_RX, data->buf[INTERRUPT_GYRO_SENSOR].gyro.x);
 	input_report_rel(data->interrupt_gyro_input_dev, REL_RY, data->buf[INTERRUPT_GYRO_SENSOR].gyro.y);
 	input_report_rel(data->interrupt_gyro_input_dev, REL_RZ, data->buf[INTERRUPT_GYRO_SENSOR].gyro.z);
-#endif
 	input_sync(data->interrupt_gyro_input_dev);
 }
 #endif
@@ -260,22 +209,6 @@ void report_mag_uncaldata(struct ssp_data *data, struct sensor_value *magdata)
 
 void report_uncalib_gyro_data(struct ssp_data *data, struct sensor_value *gyrodata)
 {
-#if ANDROID_VERSION < 80000
-	s16 lTemp[6] = {0,};
-	data->buf[GYRO_UNCALIB_SENSOR].uncal_x = gyrodata->uncal_x;
-	data->buf[GYRO_UNCALIB_SENSOR].uncal_y = gyrodata->uncal_y;
-	data->buf[GYRO_UNCALIB_SENSOR].uncal_z = gyrodata->uncal_z;
-	data->buf[GYRO_UNCALIB_SENSOR].offset_x = gyrodata->offset_x;
-	data->buf[GYRO_UNCALIB_SENSOR].offset_y = gyrodata->offset_y;
-	data->buf[GYRO_UNCALIB_SENSOR].offset_z = gyrodata->offset_z;
-
-	lTemp[0] = gyrodata->uncal_x;
-	lTemp[1] = gyrodata->uncal_y;
-	lTemp[2] = gyrodata->uncal_z;
-	lTemp[3] = gyrodata->offset_x;
-	lTemp[4] = gyrodata->offset_y;
-	lTemp[5] = gyrodata->offset_z;
-#else
 	int lTemp[6] = {0,};
 
 	data->buf[GYRO_UNCALIB_SENSOR].uncal_gyro.x = gyrodata->uncal_gyro.x;
@@ -291,7 +224,6 @@ void report_uncalib_gyro_data(struct ssp_data *data, struct sensor_value *gyroda
 	lTemp[3] = gyrodata->uncal_gyro.offset_x;
 	lTemp[4] = gyrodata->uncal_gyro.offset_y;
 	lTemp[5] = gyrodata->uncal_gyro.offset_z;
-#endif
 	ssp_push_iio_buffer(data->uncal_gyro_indio_dev,	gyrodata->timestamp, (u8*)lTemp, sizeof(lTemp));
 }
 
@@ -856,10 +788,6 @@ static const struct iio_chan_spec uncal_gyro_channels[] = {
 		.type = IIO_TIMESTAMP,
 		.channel = -1,
 		.scan_index = 3,
-#if ANDROID_VERSION < 80000
-		.scan_type = IIO_ST('s', IIO_BUFFER_12_BYTES * 8,
-			IIO_BUFFER_12_BYTES * 8, 0)
-#else
 		.scan_type = {
 			.sign = 's',
 			.realbits = 16 * 8,
@@ -867,7 +795,6 @@ static const struct iio_chan_spec uncal_gyro_channels[] = {
 			.shift = 0,
 			.repeat = 2
 		}
-#endif
 	}
 };
 

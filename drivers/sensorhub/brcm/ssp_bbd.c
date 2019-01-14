@@ -660,7 +660,7 @@ static inline void bbd_complete_ssp_msg(struct ssp_data *data, struct ssp_msg *m
 
 	clean_msg(msg);
 }
-#if ANDROID_VERSION >= 80000
+
 static inline void bbd_send_timestamp(void)
 {
 		struct ssp_msg msg;
@@ -682,7 +682,7 @@ static inline void bbd_send_timestamp(void)
 }
 
 static int count = 1;
-#endif
+
 int callback_bbd_on_packet(void *ssh_data, const char *buf, size_t size)
 {
 	struct ssp_data *data = (struct ssp_data *)ssh_data;
@@ -736,10 +736,10 @@ int callback_bbd_on_packet(void *ssh_data, const char *buf, size_t size)
 			case HUB2AP_WRITE:
 				ssp_pkt.state = WAITFOR_PKT_COMPLETE;
 				memcpy(&ssp_pkt.required, &ssp_pkt.buf[2], 2);
-#if ANDROID_VERSION >= 80000
+
 				if (count++ % 3 == 0)
 					bbd_send_timestamp();
-#endif
+
 				break;
 			case AP2HUB_WRITE:
 				if (!(msg = bbd_find_ssp_msg(data)))

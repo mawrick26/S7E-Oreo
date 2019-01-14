@@ -276,7 +276,6 @@ static struct file_operations ssp_sensorhub_fops = {
 
 void ssp_sensorhub_report_notice(struct ssp_data *ssp_data, char notice)
 {
-#if ANDROID_VERSION >= 80000
 	struct sensor_value sensorsdata;
 	int size = 0, index = 0;
 	char reportData[4] = {0x02, 0x01, 0x00, 0x00};
@@ -307,23 +306,7 @@ void ssp_sensorhub_report_notice(struct ssp_data *ssp_data, char notice)
 	memcpy(&sensorsdata.scontext_buf[index], reportData, size + 1);
 
 	report_scontext_data(ssp_data, &sensorsdata);
-#else
-	struct ssp_sensorhub_data *hub_data = ssp_data->hub_data;
 
-	if (notice == MSG2SSP_AP_STATUS_RESET) {
-		if (ssp_data->IsMcuCrashed == true) {
-			input_report_rel(hub_data->sensorhub_input_dev, NOTICE, MCU_CRASHED);
-			ssp_data->IsMcuCrashed = false;
-		} else if (ssp_data->intendedMcuReset == true) {
-			input_report_rel(hub_data->sensorhub_input_dev, NOTICE, MCU_INTENDED_RESET);
-			ssp_data->intendedMcuReset = false;
-		} else
-			input_report_rel(hub_data->sensorhub_input_dev, NOTICE, KERNEL_RESET);
-	} else
-		input_report_rel(hub_data->sensorhub_input_dev, NOTICE, notice);
-
-	input_sync(hub_data->sensorhub_input_dev);
-#endif
 	if (notice == MSG2SSP_AP_STATUS_WAKEUP)
 		sensorhub_info("wake up");
 	else if (notice == MSG2SSP_AP_STATUS_SLEEP)

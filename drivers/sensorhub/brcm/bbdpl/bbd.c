@@ -134,13 +134,7 @@ static struct bbd_device bbd;
 static unsigned char bbd_patch[] =
 {
 #if defined (CONFIG_SENSORS_SSP_GRACE)
-	#if ANDROID_VERSION < 70000
-		#include "m_os/bbd_patch_file_grace.h"
-	#elif ANDROID_VERSION >= 80000
 		#include "o_os/bbd_patch_file_grace.h"
-	#else
-		#include "n_os/bbd_patch_file_grace.h"
-	#endif
 #elif defined (CONFIG_SENSORS_SSP_HAECHI_888)
 #include "bbd_patch_file_haechi_888.h"
 #elif defined (CONFIG_SENSORS_SSP_HAECHI_880)
@@ -148,13 +142,7 @@ static unsigned char bbd_patch[] =
 #elif defined (CONFIG_SENSORS_SSP_HAECHI)
 #include "bbd_patch_file_haechi.h"
 #elif defined (CONFIG_SENSORS_SSP_LUCKY)
-	#if ANDROID_VERSION < 70000
-		#include "m_os/bbd_patch_file_lucky.h"
-	#elif ANDROID_VERSION >= 80000
 		#include "o_os/bbd_patch_file_lucky.h"
-	#else
-		#include "n_os/bbd_patch_file_lucky.h"
-	#endif
 #elif defined (CONFIG_SENSORS_SSP_VLTE)
 #include "bbd_patch_file_valley.h"
 #endif
