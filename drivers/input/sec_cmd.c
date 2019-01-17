@@ -42,13 +42,13 @@ void sec_cmd_set_cmd_exit(struct sec_cmd_data *data)
 #endif
 }
 
-void sec_cmd_set_default_result(struct sec_cmd_data *data)
-{
-	char delim = ':';
-	memset(data->cmd_result, 0x00, SEC_CMD_RESULT_STR_LEN);
-	memcpy(data->cmd_result, data->cmd, SEC_CMD_RESULT_STR_LEN);
-	strncat(data->cmd_result, &delim, 1);
-}
+//void sec_cmd_set_default_result(struct sec_cmd_data *data)
+//{
+//	char delim = ':';
+//	memset(data->cmd_result, 0x00, SEC_CMD_RESULT_STR_LEN);
+//	memcpy(data->cmd_result, data->cmd, SEC_CMD_RESULT_STR_LEN);
+//	strncat(data->cmd_result, &delim, 1);
+//}
 
 void sec_cmd_set_cmd_result(struct sec_cmd_data *data, char *buff, int len)
 {
@@ -111,8 +111,6 @@ static ssize_t sec_cmd_store(struct device *dev,
 	else
 		memcpy(buff, buf, len);
 
-	pr_debug("%s %s: COMMAND = %s\n", SECLOG, __func__, buff);
-
 	/* find command */
 	list_for_each_entry(sec_cmd_ptr, &data->cmd_list_head, list) {
 		if (!strncmp(buff, sec_cmd_ptr->cmd_name, SEC_CMD_STR_LEN)) {
@@ -149,18 +147,6 @@ static ssize_t sec_cmd_store(struct device *dev,
 			}
 			cur++;
 		} while (cur - buf <= len);
-	}
-
-	if (cmd_found) {
-		pr_info("%s %s: cmd = %s", SECLOG, __func__, sec_cmd_ptr->cmd_name);
-		for (i = 0; i < param_cnt; i++) {
-			if (i == 0)
-				pr_cont(" param =");
-			pr_cont(" %d", data->cmd_param[i]);
-		}
-		pr_cont("\n");
-	} else {
-		pr_info("%s %s: cmd = %s(%s)\n", SECLOG, __func__, buff, sec_cmd_ptr->cmd_name);
 	}
 
 	sec_cmd_ptr->cmd_func(data);
@@ -218,8 +204,6 @@ static void sec_cmd_store_function(struct sec_cmd_data *data)
 	else
 		memcpy(buff, buf, len);
 
-	pr_debug("%s %s: COMMAND : %s\n", SECLOG, __func__, buff);
-
 	/* find command */
 	list_for_each_entry(sec_cmd_ptr, &data->cmd_list_head, list) {
 		if (!strncmp(buff, sec_cmd_ptr->cmd_name, SEC_CMD_STR_LEN)) {
@@ -258,18 +242,6 @@ static void sec_cmd_store_function(struct sec_cmd_data *data)
 		} while ((cur - buf <= len) && (param_cnt < SEC_CMD_PARAM_NUM));
 	}
 
-	if (cmd_found) {
-		pr_info("%s %s: cmd = %s", SECLOG, __func__, sec_cmd_ptr->cmd_name);
-		for (i = 0; i < param_cnt; i++) {
-			if (i == 0)
-				pr_cont(" param =");
-			pr_cont(" %d", data->cmd_param[i]);
-		}
-		pr_cont("\n");
-	} else {
-		pr_info("%s %s: cmd = %s(%s)\n", SECLOG, __func__, buff, sec_cmd_ptr->cmd_name);
-	}
-
 	sec_cmd_ptr->cmd_func(data);
 
 }
@@ -304,7 +276,6 @@ static ssize_t sec_cmd_store(struct device *dev, struct device_attribute *devatt
 
 	if (kfifo_avail(&data->cmd_queue) && (queue_size < SEC_CMD_MAX_QUEUE)) {
 		kfifo_in(&data->cmd_queue, &cmd, sizeof(struct command));
-		pr_info("%s %s: push cmd: %s\n", SECLOG, __func__, cmd.cmd);
 	} else {
 		pr_err("%s %s: cmd_queue is full!!\n", SECLOG, __func__);
 
