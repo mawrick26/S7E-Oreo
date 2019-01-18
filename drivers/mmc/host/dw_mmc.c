@@ -125,7 +125,11 @@ static struct dw_mci_debug_data dw_mci_debug __cacheline_aligned;
 
 unsigned int dw_mci_debug_flag = 0;
 
+#ifdef CONFIG_MMC_SUPPORT_STLOG
+#include <linux/stlog.h>
+#else
 #define ST_LOG(fmt,...)
+#endif
 
 /* Add sysfs for read cmd_logs */
 static ssize_t dw_mci_debug_log_show(struct device *dev,

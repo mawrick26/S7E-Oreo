@@ -42,7 +42,11 @@
 #include "sdfat.h"
 #include "version.h"
 
+#ifdef CONFIG_SDFAT_SUPPORT_STLOG
+#include <linux/stlog.h>
+#else
 #define ST_LOG(fmt, ...)
+#endif
 
 /*
  * sdfat_fs_error reports a file system problem that might indicate fa data
@@ -66,6 +70,12 @@ void __sdfat_fs_error(struct super_block *sb, int report, const char *fmt, ...)
 		vaf.va = &args;
 		pr_err("[SDFAT](%s[%d:%d]):ERR: %pV\n",
 			sb->s_id, MAJOR(bd_dev), MINOR(bd_dev), &vaf);
+#ifdef CONFIG_SDFAT_SUPPORT_STLOG
+		if (opts->errors == SDFAT_ERRORS_RO && !(sb->s_flags & MS_RDONLY)) {
+			ST_LOG("[SDFAT](%s[%d:%d]):ERR: %pV\n",
+				sb->s_id, MAJOR(bd_dev), MINOR(bd_dev), &vaf);
+		}
+#endif
 		va_end(args);
 	}
 
@@ -76,6 +86,10 @@ void __sdfat_fs_error(struct super_block *sb, int report, const char *fmt, ...)
 		sb->s_flags |= MS_RDONLY;
 		pr_err("[SDFAT](%s[%d:%d]): Filesystem has been set "
 			"read-only\n", sb->s_id, MAJOR(bd_dev), MINOR(bd_dev));
+#ifdef CONFIG_SDFAT_SUPPORT_STLOG
+		ST_LOG("[SDFAT](%s[%d:%d]): Filesystem has been set read-only\n",
+			sb->s_id, MAJOR(bd_dev), MINOR(bd_dev));
+#endif
 	}
 }
 EXPORT_SYMBOL(__sdfat_fs_error);
@@ -98,6 +112,12 @@ void __sdfat_msg(struct super_block *sb, const char *level, int st, const char *
 	/* level means KERN_ pacility level */
 	printk("%s[SDFAT](%s[%d:%d]): %pV\n", level,
 			sb->s_id, MAJOR(bd_dev), MINOR(bd_dev), &vaf);
+#ifdef CONFIG_SDFAT_SUPPORT_STLOG
+	if (st) {
+		ST_LOG("[SDFAT](%s[%d:%d]): %pV\n",
+				sb->s_id, MAJOR(bd_dev), MINOR(bd_dev), &vaf);
+	}
+#endif
 	va_end(args);
 }
 EXPORT_SYMBOL(__sdfat_msg);
@@ -105,6 +125,9 @@ EXPORT_SYMBOL(__sdfat_msg);
 void sdfat_log_version(void)
 {
 	pr_info("[SDFAT] Filesystem version %s\n", SDFAT_VERSION);
+#ifdef CONFIG_SDFAT_SUPPORT_STLOG
+	ST_LOG("[SDFAT] Filesystem version %s\n", SDFAT_VERSION);
+#endif
 }
 EXPORT_SYMBOL(sdfat_log_version);
 

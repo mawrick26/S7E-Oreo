@@ -43,7 +43,11 @@
 #include <linux/bit_spinlock.h>
 #include <trace/events/block.h>
 
+#ifdef CONFIG_PROC_STLOG
+#include <linux/stlog.h>
+#else
 #define ST_LOG(fmt,...)
+#endif
 
 static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
 

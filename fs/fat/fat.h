@@ -10,7 +10,11 @@
 #include <linux/ratelimit.h>
 #include <linux/msdos_fs.h>
 
+#ifdef CONFIG_FAT_SUPPORT_STLOG
+#include <linux/stlog.h>
+#else
 #define ST_LOG(fmt,...) 
+#endif
 
 /*
  * vfat shortname flags

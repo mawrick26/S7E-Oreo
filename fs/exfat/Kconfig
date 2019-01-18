@@ -20,3 +20,8 @@ config EXFAT_VIRTUAL_XATTR_SELINUX_LABEL
 	default "u:object_r:sdcard_external:s0"
 	help
 	  Set this to the default string for SELinux label.
+
+config EXFAT_SUPPORT_STLOG
+	bool "Enable storage log"
+	default y
+	depends on EXFAT_FS && PROC_STLOG
