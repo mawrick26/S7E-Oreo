@@ -30,11 +30,15 @@
 *.xz
 *.lz4
 *.lzo
+*.zip
 *.patch
+*.diff
 *.gcno
 modules.builtin
 Module.symvers
 *.dwo
+*.log
+*.dtb
 
 #
 # Top-level generic files
@@ -57,6 +61,7 @@ Module.symvers
 #
 !.gitignore
 !.mailmap
+!.placeholder
 
 #
 # Generated include files
@@ -83,6 +88,7 @@ GSYMS
 GTAGS
 
 *.orig
+*.rej
 *~
 \#*#
 
@@ -96,3 +102,14 @@ x509.genkey
 
 # Kconfig presets
 all.config
+
+# fetched Android config fragments
+android/configs/android-*.cfg
+
+#other
+.directory
+arch/arm64/configs/
+/build.sh
+/changelog.sh
+/clean.sh
+build/
