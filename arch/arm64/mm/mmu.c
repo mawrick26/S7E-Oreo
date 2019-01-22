@@ -664,6 +664,7 @@ core_initcall(map_entry_trampoline);
 void __init paging_init(void)
 {
 	map_mem();
+
 	fixup_executable();
 
 #ifdef CONFIG_TIMA_RKP

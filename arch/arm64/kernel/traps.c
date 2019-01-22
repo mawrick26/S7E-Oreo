@@ -506,7 +506,6 @@ static void cntfrq_read_handler(unsigned int esr, struct pt_regs *regs)
 
 	if (rt != 31)
 		asm volatile("mrs %0, cntfrq_el0" : "=r" (regs->regs[rt]));
-		//regs->regs[rt] = read_sysreg(cntfrq_el0); /* android-3.18 merge */
 	regs->pc += 4;
 }
 
