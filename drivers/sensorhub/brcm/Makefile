@@ -57,15 +57,4 @@ obj-$(CONFIG_SENSORS_HRMSENSOR)		+= hrmsensor.o
 
 obj-$(CONFIG_SENSORS_SSP_BBD)           += ssp_bbd.o factory/mcu_bcm4774.o
 obj-$(CONFIG_SENSORS_SSP_BBD)           += bbdpl/
-CURRENT_ANDROID_VERSION := $(shell echo $(ANDROID_VERSION))
-CURRENT_ANDROID_MAJOR_VERSION := $(shell echo $(ANDROID_MAJOR_VERSION))
-
-$(warning ANDROID_MAJOR_VERSION : $(CURRENT_ANDROID_MAJOR_VERSION))
-$(warning ANDROID_PLATFORM_VERSION : $(CURRENT_ANDROID_VERSION))
-
-
-ifeq ($(shell echo $(ANDROID_MAJOR_VERSION)),o)
-	obj-$(CONFIG_SENSORS_SSP) += ssp_iio.o ssp_dump.o
-else
-	obj-$(CONFIG_SENSORS_SSP) += ssp_input.o ssp_dump_old.o
-endif
+obj-$(CONFIG_SENSORS_SSP)		+= ssp_iio.o ssp_dump.o
