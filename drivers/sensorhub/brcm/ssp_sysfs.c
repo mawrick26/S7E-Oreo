@@ -100,8 +100,6 @@ static void enable_sensor(struct ssp_data *data,
 
 	switch (data->aiCheckStatus[iSensorType]) {
 	case ADD_SENSOR_STATE:
-		ssp_dbg("[SSP]: %s - add %llu, New = %lldns\n",
-			 __func__, 1ULL << iSensorType, dNewDelay);
 
 		if (iSensorType == PROXIMITY_SENSOR) {
 #ifdef CONFIG_SENSORS_SSP_PROX_FACTORYCAL
@@ -150,8 +148,6 @@ static void enable_sensor(struct ssp_data *data,
 		else
 			ret = send_instruction(data, ADD_SENSOR,
 				iSensorType, uBuf, 9);
-		pr_info("[SSP], delay %d, timeout %d, flag=%d, ret%d \n",
-			dMsDelay, maxBatchReportLatency, uBuf[8], ret);
 		if (ret <= 0) {
 			uNewEnable =
 				(u64)atomic64_read(&data->aSensorEnable)
@@ -169,9 +165,6 @@ static void enable_sensor(struct ssp_data *data,
 		if (get_msdelay(dTempDelay)
 			== get_msdelay(data->adDelayBuf[iSensorType]))
 			break;
-
-		ssp_dbg("[SSP]: %s - Change %llu, New = %lldns\n",
-			__func__, 1ULL << iSensorType, dNewDelay);
 
 		memcpy(&uBuf[0], &dMsDelay, 4);
 		memcpy(&uBuf[4], &maxBatchReportLatency, 4);
@@ -211,9 +204,6 @@ static void change_sensor_delay(struct ssp_data *data,
 			== get_msdelay(data->adDelayBuf[iSensorType]))
 			break;
 
-		ssp_dbg("[SSP]: %s - Change %llu, New = %lldns\n",
-			__func__, 1ULL << iSensorType, dNewDelay);
-
 		memcpy(&uBuf[0], &dMsDelay, 4);
 		memcpy(&uBuf[4], &maxBatchReportLatency, 4);
 		uBuf[8] = batchOptions;
@@ -234,9 +224,6 @@ static int ssp_remove_sensor(struct ssp_data *data,
 {
 	u8 uBuf[4];
 	int64_t dSensorDelay = data->adDelayBuf[uChangedSensor];
-
-	ssp_dbg("[SSP]: %s - remove sensor = %lld, current state = %lld\n",
-		__func__, (u64)(1ULL << uChangedSensor), uNewEnable);
 
 	data->adDelayBuf[uChangedSensor] = DEFUALT_POLLING_DELAY;
 	data->batchLatencyBuf[uChangedSensor] = 0;
@@ -326,9 +313,6 @@ static ssize_t show_sensors_enable(struct device *dev,
 {
 	struct ssp_data *data = dev_get_drvdata(dev);
 
-	ssp_dbg("[SSP]: %s - cur_enable = %llu\n", __func__,
-		 (u64)(atomic64_read(&data->aSensorEnable)));
-
 	return sprintf(buf, "%llu\n", (u64)(atomic64_read(&data->aSensorEnable)));
 }
 
@@ -345,8 +329,6 @@ static ssize_t set_sensors_enable(struct device *dev,
 		return -EINVAL;
 
 	uNewEnable = (u64)dTemp;
-	ssp_dbg("[SSP]: %s - new_enable = %llu, old_enable = %llu\n", __func__,
-		 uNewEnable, (u64)atomic64_read(&data->aSensorEnable));
 
 	if ((uNewEnable != atomic64_read(&data->aSensorEnable)) &&
 		!(data->uSensorState & (uNewEnable - atomic64_read(&data->aSensorEnable)))) {
@@ -1592,8 +1574,6 @@ static long ssp_batch_ioctl(struct file *file, unsigned int cmd,
 		}
 	}
 
-	pr_info("[SSP] batch %d: delay %lld, timeout %lld, flag %d, ret %d \n",
-		sensor_type, dNewDelay, batch.timeout, batch.flag, ret);
 	if (!batch.timeout)
 		return 0;
 	if (ret <= 0)

@@ -399,16 +399,6 @@ void report_light_data(struct ssp_data *data, struct sensor_value *lightdata)
 
 	if(data->light_log_cnt < 3)
 	{
-#ifdef CONFIG_SENSORS_SSP_LIGHT_REPORT_LUX
-		ssp_dbg("[SSP] #>L lux=%u cct=%d r=%d g=%d b=%d c=%d atime=%d again=%d",
-			data->buf[LIGHT_SENSOR].lux,data->buf[LIGHT_SENSOR].cct,
-			data->buf[LIGHT_SENSOR].r,data->buf[LIGHT_SENSOR].g,data->buf[LIGHT_SENSOR].b,
-			data->buf[LIGHT_SENSOR].w,data->buf[LIGHT_SENSOR].a_time,data->buf[LIGHT_SENSOR].a_gain);
-#else
-		ssp_dbg("[SSP] #>L r=%d g=%d b=%d c=%d atime=%d again=%d",
-			data->buf[LIGHT_SENSOR].r,data->buf[LIGHT_SENSOR].g,data->buf[LIGHT_SENSOR].b,
-			data->buf[LIGHT_SENSOR].w,data->buf[LIGHT_SENSOR].a_time,data->buf[LIGHT_SENSOR].a_gain);	
-#endif
 		data->light_log_cnt++;
 	}
 
@@ -474,8 +464,6 @@ void report_prox_data(struct ssp_data *data, struct sensor_value *proxdata)
 	ts_low = (u32)((proxdata->timestamp)&0x00000000ffffffff);
 	
 	data->sensor_dump_flag_proximity = false;
-	ssp_dbg("[SSP] Proximity Sensor Detect : %u, raw : %u ts : %llu %d %d\n",
-		proxdata->prox_detect, proxdata->prox_adc, proxdata->timestamp, ts_high, ts_low);
 
 	data->buf[PROXIMITY_SENSOR].prox_detect = proxdata->prox_detect;
 	data->buf[PROXIMITY_SENSOR].prox_adc = proxdata->prox_adc;
@@ -525,10 +513,6 @@ void report_prox_alert_data(struct ssp_data *data, struct sensor_value *prox_ale
 	ts_high = (u32)((prox_alert_data->timestamp)>>32);
 	ts_low = (u32)((prox_alert_data->timestamp)&0x00000000ffffffff);
 	
-	ssp_dbg("[SSP] Proximity alert Sensor Detect : %d, raw : %u ts : %llu %d %d\n",
-		prox_alert_data->prox_alert_detect, prox_alert_data->prox_alert_adc,
-		prox_alert_data->timestamp, ts_high, ts_low);
-
 	data->buf[PROXIMITY_ALERT_SENSOR].prox_alert_detect = prox_alert_data->prox_alert_detect;
 	data->buf[PROXIMITY_ALERT_SENSOR].prox_alert_adc = prox_alert_data->prox_alert_adc;
 

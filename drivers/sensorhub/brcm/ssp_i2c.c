@@ -207,8 +207,6 @@ int ssp_send_cmd(struct ssp_data *data, char command, int arg)
 		return ERROR;
 	}
 
-	ssp_dbg("[SSP]: %s - command 0x%x %d\n", __func__, command, arg);
-
 	return SUCCESS;
 }
 
@@ -296,9 +294,6 @@ int send_instruction(struct ssp_data *data, u8 uInst,
 
 	msg->buffer[0] = uSensorType;
 	memcpy(&msg->buffer[1], uSendBuf, uLength);
-
-	ssp_dbg("[SSP]: %s - Inst = 0x%x, Sensor Type = 0x%x, data = %u\n",
-			__func__, command, uSensorType, msg->buffer[1]);
 
 	iRet = ssp_spi_async(data, msg);
 
@@ -638,9 +633,6 @@ void set_proximity_threshold(struct ssp_data *data)
 	struct ssp_msg *msg;
 
 	if (!(data->uSensorState & (1 << PROXIMITY_SENSOR))) {
-		pr_info("[SSP]: %s - Skip this function!!!,"\
-			"proximity sensor is not connected(0x%llx)\n",
-			__func__, data->uSensorState);
 		return;
 	}
 
@@ -713,20 +705,6 @@ void set_proximity_threshold(struct ssp_data *data)
 			__func__, iRet);
 		return;
 	}
-
-#if defined(CONFIG_SENSORS_SSP_PROX_AUTOCAL_AMS)
-	pr_info("[SSP]: Proximity Threshold - %u, %u, %u, %u\n",
-		data->uProxHiThresh, data->uProxLoThresh,
-		data->uProxHiThresh_detect, data->uProxLoThresh_detect);
-#else
-#ifdef CONFIG_SENSORS_SSP_PROX_DUALIZATION
-	pr_info("[SSP]: Proximity Threshold - %d, %d / %d %d\n",
-		data->uProxHiThresh, data->uProxLoThresh, data->uProxHiThresh_tmd4904, data->uProxLoThresh_tmd4904);
-#else
-	pr_info("[SSP]: Proximity Threshold - %d, %d\n",
-		data->uProxHiThresh, data->uProxLoThresh);
-#endif
-#endif
 }
 
 void set_proximity_alert_threshold(struct ssp_data *data)
@@ -736,9 +714,6 @@ void set_proximity_alert_threshold(struct ssp_data *data)
 	struct ssp_msg *msg;
 
 	if (!(data->uSensorState & (1 << PROXIMITY_ALERT_SENSOR))) {
-		pr_info("[SSP]: %s - Skip this function!!!,"\
-			"proximity alert sensor is not connected(0x%llx)\n",
-			__func__, data->uSensorState);
 		return;
 	}
 
