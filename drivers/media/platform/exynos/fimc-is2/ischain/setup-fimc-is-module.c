@@ -159,15 +159,6 @@ int exynos_fimc_is_module_pins_cfg(struct device *dev,
 	pin_ctrls = pdata->pin_ctrls;
 	idx_max = pdata->pinctrl_index[scenario][enable];
 
-	/* print configs */
-	for (idx = 0; idx < idx_max; ++idx) {
-		printk(KERN_DEBUG "[@] pin_ctrl(act(%d), pin(%ld), val(%d), nm(%s)\n",
-			pin_ctrls[scenario][enable][idx].act,
-			(pin_ctrls[scenario][enable][idx].act == PIN_FUNCTION) ? 0 : pin_ctrls[scenario][enable][idx].pin,
-			pin_ctrls[scenario][enable][idx].value,
-			pin_ctrls[scenario][enable][idx].name);
-	}
-
 	/* do configs */
 	for (idx = 0; idx < idx_max; ++idx) {
 		ret = exynos_fimc_is_module_pin_control(dev, pinctrl, &pin_ctrls[scenario][enable][idx]);
@@ -269,15 +260,6 @@ int exynos_fimc_is_module_pins_dbg(struct device *dev,
 	pinctrl = pdata->pinctrl;
 	pin_ctrls = pdata->pin_ctrls;
 	idx_max = pdata->pinctrl_index[scenario][enable];
-
-	/* print configs */
-	for (idx = 0; idx < idx_max; ++idx) {
-		printk(KERN_DEBUG "[@] pin_ctrl(act(%d), pin(%ld), val(%d), nm(%s)\n",
-			pin_ctrls[scenario][enable][idx].act,
-			(pin_ctrls[scenario][enable][idx].act == PIN_FUNCTION) ? 0 : pin_ctrls[scenario][enable][idx].pin,
-			pin_ctrls[scenario][enable][idx].value,
-			pin_ctrls[scenario][enable][idx].name);
-	}
 
 	/* do configs */
 	for (idx = 0; idx < idx_max; ++idx) {

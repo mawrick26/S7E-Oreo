@@ -23,7 +23,6 @@ bool vra_binary_load;
 
 int fimc_is_log_write_console(char *str)
 {
-	pr_info("[@][LIB] %s", str);
 	return 0;
 }
 
