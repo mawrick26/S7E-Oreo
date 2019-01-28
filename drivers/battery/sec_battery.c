@@ -230,16 +230,14 @@ char *sec_bat_charging_mode_str[] = {
 	"Normal",
 	"Additional",
 	"Re-Charging",
-	"ABS"
-};
+	"ABS"};
 
 char *sec_bat_status_str[] = {
 	"Unknown",
 	"Charging",
 	"Discharging",
 	"Not-charging",
-	"Full"
-};
+	"Full"};
 
 char *sec_bat_health_str[] = {
 	"Unknown",
@@ -254,8 +252,7 @@ char *sec_bat_health_str[] = {
 	"WatchdogTimerExpire",
 	"SafetyTimerExpire",
 	"UnderVoltage",
-	"OverheatLimit"
-};
+	"OverheatLimit"};
 
 static int sec_bat_get_wireless_current(struct sec_battery_info *battery, int incurr)
 {
@@ -328,7 +325,8 @@ static int sec_bat_get_wireless_current(struct sec_battery_info *battery, int in
 
 	/* 7. Full-None state && SIOP_LEVEL 100 */
 	if (battery->siop_level == 100 &&
-		battery->status == POWER_SUPPLY_STATUS_FULL && battery->charging_mode == SEC_BATTERY_CHARGING_NONE) {
+		battery->status == POWER_SUPPLY_STATUS_FULL && battery->charging_mode == SEC_BATTERY_CHARGING_NONE)
+	{
 		incurr = battery->pdata->wc_full_input_limit_current;
 	}
 

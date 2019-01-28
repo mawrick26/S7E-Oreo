@@ -152,12 +152,6 @@ bool sec_bat_cisd_check(struct sec_battery_info *battery)
 			}
 		}
 
-		dev_info(battery->dev, "%s: [CISD] iavg: %d, incur: %d, chgcur: %d,\n"
-			"cc_T: %ld, lcd_off_T: %ld, passed_T: %ld, full_T: %ld, chg_end_T: %ld, recnt: %d, cisd: 0x%x\n",__func__,
-			battery->current_avg, incur_val.intval, chgcur_val.intval,
-			pcisd->cc_start_time, pcisd->lcd_off_start_time, battery->charging_passed_time,
-			battery->charging_fullcharged_time, pcisd->charging_end_time, pcisd->recharge_count, pcisd->state);
-
 		pcisd->state &= ~CISD_STATE_CAP_OVERFLOW;
 
 		capcurr_val.intval = SEC_BATTERY_CAPACITY_CURRENT;
