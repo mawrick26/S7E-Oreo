@@ -806,7 +806,6 @@ static int vfsspi_register_drdy_signal(struct vfsspi_device_data *vfsspi_device,
 
 static int vfsspi_enableIrq(struct vfsspi_device_data *vfsspi_device)
 {
-	pr_info("%s\n", __func__);
 	vfsspi_set_retain_pin(vfsspi_device, vfsspi_device->retain_delayset, 1);
 	spin_lock_irq(&vfsspi_device->irq_lock);
 	if (atomic_read(&vfsspi_device->irq_enabled)
@@ -825,7 +824,6 @@ static int vfsspi_enableIrq(struct vfsspi_device_data *vfsspi_device)
 
 static int vfsspi_disableIrq(struct vfsspi_device_data *vfsspi_device)
 {
-	pr_info("%s\n", __func__);
 	spin_lock_irq(&vfsspi_device->irq_lock);
 	if (atomic_read(&vfsspi_device->irq_enabled)
 		== DRDY_IRQ_DISABLE) {
@@ -866,11 +864,9 @@ static irqreturn_t vfsspi_irq(int irq, void *context)
 			wake_lock_timeout(&vfsspi_device->fp_signal_lock, 3 * HZ);
 #endif
 #endif
-			pr_info("%s disableIrq\n", __func__);
 		}
 		else {
 			spin_unlock(&vfsspi_device->irq_lock);
-			pr_info("%s irq already diabled\n", __func__);
 		}
 	}
 	return IRQ_HANDLED;
@@ -1030,7 +1026,6 @@ static long vfsspi_ioctl(struct file *filp, unsigned int cmd,
 		break;
 #ifndef ENABLE_SENSORS_FPRINT_SECURE
 	case VFSSPI_IOCTL_RW_SPI_MESSAGE:
-		pr_debug("%s VFSSPI_IOCTL_RW_SPI_MESSAGE\n", __func__);
 		ret_val = vfsspi_rw_spi_message(vfsspi_device, arg);
 		if (ret_val) {
 			pr_err("%s : VFSSPI_IOCTL_RW_SPI_MESSAGE error %d\n",
@@ -1039,23 +1034,18 @@ static long vfsspi_ioctl(struct file *filp, unsigned int cmd,
 		break;
 #endif
 	case VFSSPI_IOCTL_SET_CLK:
-		pr_info("%s VFSSPI_IOCTL_SET_CLK\n", __func__);
 		ret_val = vfsspi_set_clk(vfsspi_device, arg);
 		break;
 	case VFSSPI_IOCTL_REGISTER_DRDY_SIGNAL:
-		pr_info("%s VFSSPI_IOCTL_REGISTER_DRDY_SIGNAL\n", __func__);
 		ret_val = vfsspi_register_drdy_signal(vfsspi_device, arg);
 		break;
 	case VFSSPI_IOCTL_SET_DRDY_INT:
-		pr_info("%s VFSSPI_IOCTL_SET_DRDY_INT\n", __func__);
 		ret_val = vfsspi_set_drdy_int(vfsspi_device, arg);
 		break;
 	case VFSSPI_IOCTL_POWER_ON:
-		pr_info("%s VFSSPI_IOCTL_POWER_ON\n", __func__);
 		vfsspi_ioctl_power_on(vfsspi_device);
 		break;
 	case VFSSPI_IOCTL_POWER_OFF:
-		pr_info("%s VFSSPI_IOCTL_POWER_OFF\n", __func__);
 		vfsspi_ioctl_power_off(vfsspi_device);
 		break;
 	case VFSSPI_IOCTL_POWER_CONTROL:
@@ -1080,8 +1070,6 @@ static long vfsspi_ioctl(struct file *filp, unsigned int cmd,
 		}
 		if (onoff) {
 			u8 retry_cnt = 0;
-			pr_info("%s VFSSPI_IOCTL_CPU_SPEEDUP ON:%d, retry: %d\n",
-				__func__, onoff, retry_cnt);
 #if defined(CONFIG_SECURE_OS_BOOSTER_API)
 			do {
 				ret_val = secos_booster_start(onoff - 1);
@@ -1095,7 +1083,6 @@ static long vfsspi_ioctl(struct file *filp, unsigned int cmd,
 			} while (ret_val && retry_cnt < 7);
 #endif
 		} else {
-			pr_info("%s VFSSPI_IOCTL_CPU_SPEEDUP OFF\n", __func__);
 #if defined(CONFIG_SECURE_OS_BOOSTER_API)
 			ret_val = secos_booster_stop();
 			if (ret_val)
@@ -1667,14 +1654,6 @@ static void vfsspi_work_func_debug(struct work_struct *work)
 		ldo_value = (gpio_get_value(g_data->ldo_pin2) << 1)
 					| gpio_get_value(g_data->ldo_pin);
 	}
-	pr_info("%s ldo:%d,"
-		" sleep:%d, irq:%d, tz:%d, type:%s, cnt_irq:%d, adm: %d\n",
-		__func__,
-		ldo_value, gpio_get_value(g_data->sleep_pin),
-		gpio_get_value(g_data->drdy_pin),
-		g_data->tz_mode,
-		sensor_status[g_data->sensortype + 1],
-		cnt_irq, g_data->detect_mode);
 }
 
 static void vfsspi_enable_debug_timer(void)
