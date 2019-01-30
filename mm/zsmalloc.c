@@ -491,7 +491,7 @@ static void get_zspage_mapping(struct page *page, unsigned int *class_idx,
 				enum fullness_group *fullness)
 {
 	unsigned long m;
-	BUG_ON(!is_first_page(page));
+	VM_BUG_ON_PAGE(!is_first_page(page), page);
 
 	m = (unsigned long)page->mapping;
 	*fullness = m & FULLNESS_MASK;
@@ -502,7 +502,7 @@ static void set_zspage_mapping(struct page *page, unsigned int class_idx,
 				enum fullness_group fullness)
 {
 	unsigned long m;
-	BUG_ON(!is_first_page(page));
+	VM_BUG_ON_PAGE(!is_first_page(page), page);
 
 	m = ((class_idx & CLASS_IDX_MASK) << FULLNESS_BITS) |
 			(fullness & FULLNESS_MASK);
@@ -724,7 +724,7 @@ static enum fullness_group get_fullness_group(struct page *page)
 {
 	int inuse, max_objects;
 	enum fullness_group fg;
-	BUG_ON(!is_first_page(page));
+	VM_BUG_ON_PAGE(!is_first_page(page), page);
 
 	inuse = page->inuse;
 	max_objects = page->objects;
@@ -752,7 +752,7 @@ static void insert_zspage(struct page *page, struct size_class *class,
 {
 	struct page **head;
 
-	BUG_ON(!is_first_page(page));
+	VM_BUG_ON_PAGE(!is_first_page(page), page);
 
 	if (fullness >= _ZS_NR_FULLNESS_GROUPS)
 		return;
@@ -777,13 +777,13 @@ static void remove_zspage(struct page *page, struct size_class *class,
 {
 	struct page **head;
 
-	BUG_ON(!is_first_page(page));
+	VM_BUG_ON_PAGE(!is_first_page(page), page);
 
 	if (fullness >= _ZS_NR_FULLNESS_GROUPS)
 		return;
 
 	head = &class->fullness_list[fullness];
-	BUG_ON(!*head);
+	VM_BUG_ON_PAGE(!*head, page);
 	if (list_empty(&(*head)->lru))
 		*head = NULL;
 	else if (*head == page)
@@ -811,8 +811,6 @@ static enum fullness_group fix_fullness_group(struct size_class *class,
 {
 	int class_idx;
 	enum fullness_group currfg, newfg;
-
-	BUG_ON(!is_first_page(page));
 
 	get_zspage_mapping(page, &class_idx, &currfg);
 	newfg = get_fullness_group(page);
@@ -897,7 +895,7 @@ static void *location_to_obj(struct page *page, unsigned long obj_idx)
 	unsigned long obj;
 
 	if (!page) {
-		BUG_ON(obj_idx);
+		VM_BUG_ON(obj_idx);
 		return NULL;
 	}
 
@@ -930,7 +928,7 @@ static unsigned long obj_to_head(struct size_class *class, struct page *page,
 			void *obj)
 {
 	if (class->huge) {
-		VM_BUG_ON(!is_first_page(page));
+		VM_BUG_ON_PAGE(!is_first_page(page), page);
 		return *(unsigned long *)page_private(page);
 	} else
 		return *(unsigned long *)obj;
@@ -980,8 +978,8 @@ static void free_zspage(struct page *first_page)
 {
 	struct page *nextp, *tmp, *head_extra;
 
-	BUG_ON(!is_first_page(first_page));
-	BUG_ON(first_page->inuse);
+	VM_BUG_ON_PAGE(!is_first_page(first_page), first_page);
+	VM_BUG_ON_PAGE(first_page->inuse, first_page);
 
 	head_extra = (struct page *)page_private(first_page);
 
@@ -1007,7 +1005,7 @@ static void init_zspage(struct page *first_page, struct size_class *class)
 	unsigned long off = 0;
 	struct page *page = first_page;
 
-	BUG_ON(!is_first_page(first_page));
+	VM_BUG_ON_PAGE(!is_first_page(first_page), first_page);
 	while (page) {
 		struct page *next_page;
 		struct link_free *link;
@@ -1391,7 +1389,7 @@ static bool can_merge(struct size_class *prev, int size, int pages_per_zspage)
 
 static bool zspage_full(struct page *page)
 {
-	BUG_ON(!is_first_page(page));
+	VM_BUG_ON_PAGE(!is_first_page(page), page);
 
 	return page->inuse == page->objects;
 }
@@ -1494,14 +1492,12 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
 	struct page *pages[2];
 	void *ret;
 
-	BUG_ON(!handle);
-
 	/*
 	 * Because we use per-cpu mapping areas shared among the
 	 * pools/users, we can't allow mapping in interrupt context
 	 * because it can corrupt another users mappings.
 	 */
-	BUG_ON(in_interrupt());
+	WARN_ON_ONCE(in_interrupt());
 
 	/* From now on, migration cannot move the object */
 	pin_tag(handle);
@@ -1547,8 +1543,6 @@ void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
 	enum fullness_group fg;
 	struct size_class *class;
 	struct mapping_area *area;
-
-	BUG_ON(!handle);
 
 	obj = handle_to_obj(handle);
 	obj_to_location(obj, &page, &obj_idx);
@@ -1674,8 +1668,6 @@ static void obj_free(struct zs_pool *pool, struct size_class *class,
 	void *vaddr;
 	int class_idx;
 	enum fullness_group fullness;
-
-	BUG_ON(!obj);
 
 	obj &= ~OBJ_ALLOCATED_TAG;
 	obj_to_location(obj, &f_page, &f_objidx);
@@ -1987,7 +1979,6 @@ static void zs_object_copy(unsigned long src, unsigned long dst,
 			kunmap_atomic(d_addr);
 			kunmap_atomic(s_addr);
 			s_page = get_next_page(s_page);
-			BUG_ON(!s_page);
 			s_addr = kmap_atomic(s_page);
 			d_addr = kmap_atomic(d_page);
 			s_size = class->size - written;
@@ -2000,7 +1991,6 @@ static void zs_object_copy(unsigned long src, unsigned long dst,
 		if (d_off + size >= PAGE_SIZE) {
 			kunmap_atomic(d_addr);
 			d_page = get_next_page(d_page);
-			BUG_ON(!d_page);
 			d_addr = kmap_atomic(d_page);
 			d_size = class->size - written;
 			d_off = 0;
@@ -2134,8 +2124,6 @@ static void putback_zspage(struct zs_pool *pool, struct size_class *class,
 {
 	enum fullness_group fullness;
 
-	BUG_ON(!is_first_page(first_page));
-
 	fullness = get_fullness_group(first_page);
 	insert_zspage(first_page, class, fullness);
 	set_zspage_mapping(first_page, class->index, fullness);
@@ -2172,8 +2160,6 @@ static unsigned long __zs_compact(struct zs_pool *pool,
 
 	spin_lock(&class->lock);
 	while ((src_page = isolate_source_page(class))) {
-
-		BUG_ON(!is_first_page(src_page));
 
 		/* The goal is to migrate all live objects in source page */
 		nr_to_migrate = src_page->inuse;
