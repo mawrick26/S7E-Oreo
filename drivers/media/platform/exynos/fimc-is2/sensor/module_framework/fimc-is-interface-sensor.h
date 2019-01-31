@@ -51,7 +51,8 @@
 
 #define DEBUG_SENSOR_INTERFACE (0)
 #if (DEBUG_SENSOR_INTERFACE == 1)
-#define dbg_sen_itf(fmt, args...)
+#define dbg_sen_itf(fmt, args...) \
+	printk(KERN_DEBUG "[@][SEN_ITF] " fmt, ##args)
 #else
 #define dbg_sen_itf dbg_sensor
 #endif
