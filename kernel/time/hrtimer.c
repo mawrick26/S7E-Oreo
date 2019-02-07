@@ -471,19 +471,19 @@ debug_init(struct hrtimer *timer, clockid_t clockid,
 	   enum hrtimer_mode mode)
 {
 	debug_hrtimer_init(timer);
-	trace_hrtimer_init(timer, clockid, mode);
+//	trace_hrtimer_init(timer, clockid, mode);
 }
 
 static inline void debug_activate(struct hrtimer *timer)
 {
 	debug_hrtimer_activate(timer);
-	trace_hrtimer_start(timer);
+//	trace_hrtimer_start(timer);
 }
 
 static inline void debug_deactivate(struct hrtimer *timer)
 {
 	debug_hrtimer_deactivate(timer);
-	trace_hrtimer_cancel(timer);
+//	trace_hrtimer_cancel(timer);
 }
 
 /* High resolution timer related functions */
@@ -1266,11 +1266,11 @@ static void __run_hrtimer(struct hrtimer *timer, ktime_t *now)
 	 * the timer base.
 	 */
 	raw_spin_unlock(&cpu_base->lock);
-	trace_hrtimer_expire_entry(timer, now);
+//	trace_hrtimer_expire_entry(timer, now);
 	exynos_ss_hrtimer(timer, &now->tv64, fn, ESS_FLAG_IN);
 	restart = fn(timer);
 	exynos_ss_hrtimer(timer, &now->tv64, fn, ESS_FLAG_OUT);
-	trace_hrtimer_expire_exit(timer);
+//	trace_hrtimer_expire_exit(timer);
 	raw_spin_lock(&cpu_base->lock);
 
 	/*

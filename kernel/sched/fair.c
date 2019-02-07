@@ -732,7 +732,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
 	if (entity_is_task(curr)) {
 		struct task_struct *curtask = task_of(curr);
 
-		trace_sched_stat_runtime(curtask, delta_exec, curr->vruntime);
+//		trace_sched_stat_runtime(curtask, delta_exec, curr->vruntime);
 		cpuacct_charge(curtask, delta_exec);
 		account_group_exec_runtime(curtask, delta_exec);
 	}
@@ -772,12 +772,12 @@ update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	schedstat_set(se->statistics.wait_count, se->statistics.wait_count + 1);
 	schedstat_set(se->statistics.wait_sum, se->statistics.wait_sum +
 			rq_clock(rq_of(cfs_rq)) - se->statistics.wait_start);
-#ifdef CONFIG_SCHEDSTATS
+/*#ifdef CONFIG_SCHEDSTATS
 	if (entity_is_task(se)) {
 		trace_sched_stat_wait(task_of(se),
 			rq_clock(rq_of(cfs_rq)) - se->statistics.wait_start);
 	}
-#endif
+#endif*/
 	schedstat_set(se->statistics.wait_start, 0);
 }
 
@@ -1427,14 +1427,14 @@ static int task_numa_migrate(struct task_struct *p)
 
 	if (env.best_task == NULL) {
 		ret = migrate_task_to(p, env.best_cpu);
-		if (ret != 0)
-			trace_sched_stick_numa(p, env.src_cpu, env.best_cpu);
+//		if (ret != 0)
+//			trace_sched_stick_numa(p, env.src_cpu, env.best_cpu);
 		return ret;
 	}
 
 	ret = migrate_swap(p, env.best_task);
-	if (ret != 0)
-		trace_sched_stick_numa(p, env.src_cpu, task_cpu(env.best_task));
+//	if (ret != 0)
+//		trace_sched_stick_numa(p, env.src_cpu, task_cpu(env.best_task));
 	put_task_struct(env.best_task);
 	return ret;
 }
@@ -2682,8 +2682,8 @@ static inline void update_rq_runnable_avg(struct rq *rq, int runnable)
 	__update_entity_runnable_avg(rq->clock_task, &rq->avg, runnable,
 				     runnable, cpu);
 	__update_tg_runnable_avg(&rq->avg, &rq->cfs);
-	trace_sched_rq_runnable_ratio(cpu_of(rq), rq->avg.load_avg_ratio);
-	trace_sched_rq_runnable_load(cpu_of(rq), rq->cfs.runnable_load_avg);
+//	trace_sched_rq_runnable_ratio(cpu_of(rq), rq->avg.load_avg_ratio);
+//	trace_sched_rq_runnable_load(cpu_of(rq), rq->cfs.runnable_load_avg);
 }
 #else /* CONFIG_FAIR_GROUP_SCHED */
 static inline void __update_cfs_rq_tg_load_contrib(struct cfs_rq *cfs_rq,
@@ -2758,7 +2758,7 @@ static inline void __update_task_entity_contrib(struct sched_entity *se)
 	contrib = se->avg.runnable_avg_sum * scale_load_down(se->load.weight);
 	contrib /= (se->avg.runnable_avg_period + 1);
 	se->avg.load_avg_contrib = scale_load(contrib);
-	trace_sched_task_load_contrib(task_of(se), se->avg.load_avg_contrib);
+//	trace_sched_task_load_contrib(task_of(se), se->avg.load_avg_contrib);
 	contrib = se->avg.runnable_avg_sum * scale_load_down(NICE_0_LOAD);
 	contrib /= (se->avg.runnable_avg_period + 1);
 	se->avg.load_avg_ratio = scale_load(contrib);
@@ -2767,7 +2767,7 @@ static inline void __update_task_entity_contrib(struct sched_entity *se)
 		se->avg.load_avg_ratio > hmp_up_threshold)
 		cpu_rq(smp_processor_id())->next_balance = jiffies;
 #endif
-	trace_sched_task_runnable_ratio(task_of(se), se->avg.load_avg_ratio);
+//	trace_sched_task_runnable_ratio(task_of(se), se->avg.load_avg_ratio);
 }
 
 /* Compute the current contribution to load_avg by se, return any delta */
@@ -3053,7 +3053,7 @@ static void enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 
 		if (tsk) {
 			account_scheduler_latency(tsk, delta >> 10, 1);
-			trace_sched_stat_sleep(tsk, delta);
+//			trace_sched_stat_sleep(tsk, delta);
 		}
 	}
 	if (se->statistics.block_start) {
@@ -3072,10 +3072,10 @@ static void enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 			if (tsk->in_iowait) {
 				se->statistics.iowait_sum += delta;
 				se->statistics.iowait_count++;
-				trace_sched_stat_iowait(tsk, delta);
+//				trace_sched_stat_iowait(tsk, delta);
 			}
 
-			trace_sched_stat_blocked(tsk, delta);
+//			trace_sched_stat_blocked(tsk, delta);
 
 			/*
 			 * Blocking time is in units of nanosecs, so shift by
@@ -5956,19 +5956,19 @@ static inline unsigned int hmp_offload_down(int cpu, struct sched_entity *se)
 	/* Is there an idle CPU in the current domain */
 	min_usage = hmp_domain_min_load(hmp_cpu_domain(cpu), NULL, NULL);
 	if (min_usage == 0){
-		trace_sched_hmp_offload_abort(cpu,min_usage,"load");
+//		trace_sched_hmp_offload_abort(cpu,min_usage,"load");
 		return NR_CPUS;
 	}
 
 	/* Is the task alone on the cpu? */
 	if (cpu_rq(cpu)->cfs.h_nr_running < 2) {
-		trace_sched_hmp_offload_abort(cpu,cpu_rq(cpu)->cfs.h_nr_running,"nr_running");
+//		trace_sched_hmp_offload_abort(cpu,cpu_rq(cpu)->cfs.h_nr_running,"nr_running");
 		return NR_CPUS;
 	}
 
 	/* Is the task actually starving? */
 	if (hmp_task_starvation(se) > 768) /* <25% waiting */ {
-		trace_sched_hmp_offload_abort(cpu,hmp_task_starvation(se),"starvation");
+//		trace_sched_hmp_offload_abort(cpu,hmp_task_starvation(se),"starvation");
 		return NR_CPUS;
 	}
 
@@ -5977,10 +5977,10 @@ static inline unsigned int hmp_offload_down(int cpu, struct sched_entity *se)
 			tsk_cpus_allowed(task_of(se)));
 
 	if (min_usage == 0){
-		trace_sched_hmp_offload_succeed(cpu, dest_cpu);
+//		trace_sched_hmp_offload_succeed(cpu, dest_cpu);
 		return dest_cpu;
 	} else {
-		trace_sched_hmp_offload_abort(cpu, min_usage, "slowdomain");
+//		trace_sched_hmp_offload_abort(cpu, min_usage, "slowdomain");
 	}
 	return NR_CPUS;
 }
@@ -6116,20 +6116,20 @@ unlock:
 				 * idle CPU or 1023 for any partly-busy one.
 				 * Be explicit about requirement for an idle CPU.
 				 */
-				trace_sched_hmp_migrate(p, thread_pid, HMP_MIGRATE_INFORM);
+//				trace_sched_hmp_migrate(p, thread_pid, HMP_MIGRATE_INFORM);
 				new_cpu = hmp_select_faster_cpu(p, prev_cpu, &lowest_ratio);
 				if (lowest_ratio == 0) {
 					hmp_next_up_delay(&p->se, new_cpu);
-					trace_sched_hmp_migrate(p, new_cpu, HMP_MIGRATE_FAMILY);
+//					trace_sched_hmp_migrate(p, new_cpu, HMP_MIGRATE_FAMILY);
 					return new_cpu;
 				}
 				/* failed to perform HMP fork balance, use normal balance */
 				new_cpu = prev_cpu;
 			} else {
 				/* Make sure that the task stays in its previous hmp domain */
-				trace_sched_hmp_migrate(p, thread_pid, HMP_MIGRATE_INFORM);
+//				trace_sched_hmp_migrate(p, thread_pid, HMP_MIGRATE_INFORM);
 				new_cpu = hmp_select_faster_cpu(p, prev_cpu, &lowest_ratio);
-				trace_sched_hmp_migrate(p, new_cpu, HMP_MIGRATE_FAMILY);
+//				trace_sched_hmp_migrate(p, new_cpu, HMP_MIGRATE_FAMILY);
 
 				return new_cpu;
 
@@ -6141,7 +6141,7 @@ unlock:
 
 	if (hmp_up_migration(prev_cpu, &new_cpu, &p->se)) {
 		hmp_next_up_delay(&p->se, new_cpu);
-		trace_sched_hmp_migrate(p, new_cpu, HMP_MIGRATE_WAKEUP);
+//		trace_sched_hmp_migrate(p, new_cpu, HMP_MIGRATE_WAKEUP);
 		return new_cpu;
 	}
 	if (hmp_down_migration(prev_cpu, &p->se)) {
@@ -6160,11 +6160,11 @@ unlock:
 			if (hmp_dwcompensation.enabled &&
 				p->se.avg.load_avg_ratio >= hmp_dwcompensation.threshold) {
 				hmp_do_dwcompensation(new_cpu, p->se.avg.load_avg_ratio);
-				trace_sched_hmp_migrate_compensation(p, new_cpu,
-					HMP_MIGRATE_WAKEUP, p->se.avg.load_avg_ratio);
+//				trace_sched_hmp_migrate_compensation(p, new_cpu,
+//					HMP_MIGRATE_WAKEUP, p->se.avg.load_avg_ratio);
 			}
 #endif
-			trace_sched_hmp_migrate(p, new_cpu, HMP_MIGRATE_WAKEUP);
+//			trace_sched_hmp_migrate(p, new_cpu, HMP_MIGRATE_WAKEUP);
 			return new_cpu;
 		}
 	}
@@ -9560,8 +9560,8 @@ static void hmp_force_up_migration(int this_cpu)
 				target->push_cpu = target_cpu;
 				target->migrate_task = p;
 				force = 1;
-				trace_sched_hmp_migrate(p, target->push_cpu,
-					HMP_MIGRATE_FORCE);
+//				trace_sched_hmp_migrate(p, target->push_cpu,
+//					HMP_MIGRATE_FORCE);
 				hmp_next_up_delay(&p->se, target->push_cpu);
 			}
 		}
@@ -9580,8 +9580,8 @@ static void hmp_force_up_migration(int this_cpu)
 				target->active_balance = 1;
 				target->migrate_task = p;
 				force = 1;
-				trace_sched_hmp_migrate(p, target->push_cpu,
-					HMP_MIGRATE_OFFLOAD);
+//				trace_sched_hmp_migrate(p, target->push_cpu,
+//					HMP_MIGRATE_OFFLOAD);
 				hmp_next_down_delay(&p->se, target->push_cpu);
 			}
 		}
@@ -9677,8 +9677,8 @@ static unsigned int hmp_idle_pull(int this_cpu)
 		target->push_cpu = this_cpu;
 		target->migrate_task = p;
 		force = 1;
-		trace_sched_hmp_migrate(p, target->push_cpu,
-			HMP_MIGRATE_IDLE_PULL);
+//		trace_sched_hmp_migrate(p, target->push_cpu,
+//			HMP_MIGRATE_IDLE_PULL);
 		hmp_next_up_delay(&p->se, target->push_cpu);
 	} else {
 		put_task_struct(p);
@@ -10504,7 +10504,7 @@ static void add_thread_group_info(struct sched_entity *se)
 		}
 	}
 
-	trace_sched_hp_event_thread_group(group_leader, task_of(se), group_leader->thread_group_load, group_leader->nr_thread_group, se->avg.load_avg_ratio, "enqueue");
+//	trace_sched_hp_event_thread_group(group_leader, task_of(se), group_leader->thread_group_load, group_leader->nr_thread_group, se->avg.load_avg_ratio, "enqueue");
 
 	update_boost_request(se);
 	raw_spin_unlock_irqrestore(&group_leader->thread_group_lock, flags);
@@ -10522,7 +10522,7 @@ static void sub_thread_group_info(struct sched_entity *se)
 		task_of(se)->applied_to_group_load = false;
 	}
 
-	trace_sched_hp_event_thread_group(group_leader, task_of(se), group_leader->thread_group_load, group_leader->nr_thread_group, se->avg.load_avg_ratio, "dequeue");
+//	trace_sched_hp_event_thread_group(group_leader, task_of(se), group_leader->thread_group_load, group_leader->nr_thread_group, se->avg.load_avg_ratio, "dequeue");
 
 	update_boost_request(se);
 	raw_spin_unlock_irqrestore(&group_leader->thread_group_lock, flags);
@@ -10553,7 +10553,7 @@ static void update_thread_group_info(struct sched_entity *se)
 			task_of(se)->member_of_group = true;
 		}
 	}
-	trace_sched_hp_event_thread_group(group_leader, task_of(se), group_leader->thread_group_load, group_leader->nr_thread_group, se->avg.load_avg_ratio, "update");
+//	trace_sched_hp_event_thread_group(group_leader, task_of(se), group_leader->thread_group_load, group_leader->nr_thread_group, se->avg.load_avg_ratio, "update");
 
 	update_boost_request(se);
 	raw_spin_unlock_irqrestore(&group_leader->thread_group_lock, flags);
@@ -10572,7 +10572,7 @@ static void exit_thread_group_info(struct sched_entity *se)
 		task_of(se)->applied_to_group_load = false;
 	}
 
-	trace_sched_hp_event_thread_group(group_leader, task_of(se), group_leader->thread_group_load, group_leader->nr_thread_group, se->avg.load_avg_ratio, "exit");
+//	trace_sched_hp_event_thread_group(group_leader, task_of(se), group_leader->thread_group_load, group_leader->nr_thread_group, se->avg.load_avg_ratio, "exit");
 
 	update_boost_request(se);
 	raw_spin_unlock_irqrestore(&group_leader->thread_group_lock, flags);
@@ -10653,8 +10653,8 @@ static bool is_big_throttled(unsigned long threshold)
 
 		/* FIXME: do not hard-code "2" */
 		if (load == 0 || load * big_multiplier < (threshold >> 2)) {
-			trace_sched_hp_event_system_load(cpu,
-			load * big_multiplier, threshold >> 2, "core not throttled");
+//			trace_sched_hp_event_system_load(cpu,
+//			load * big_multiplier, threshold >> 2, "core not throttled");
 			return false;
 		} else {
 			big_sum += load;
@@ -10663,19 +10663,19 @@ static bool is_big_throttled(unsigned long threshold)
 
 	if (hmp_boost()) {
 		little_sum = hmp_domain_sum_load(hmp_cpu_domain(0));
-		trace_sched_hp_event_system_load(raw_smp_processor_id(),
-					little_sum, -1, "little load");
+//		trace_sched_hp_event_system_load(raw_smp_processor_id(),
+//					little_sum, -1, "little load");
 	} else if (atomic_read(&hmp_num_big_threads) <= hpgov_default_level()) {
 		return false;
 	} else {
-		trace_sched_hp_event_system_load(raw_smp_processor_id(),
-				atomic_read(&hmp_num_big_threads), -1,
-				"big threads count");
+//		trace_sched_hp_event_system_load(raw_smp_processor_id(),
+//				atomic_read(&hmp_num_big_threads), -1,
+//				"big threads count");
 	}
 
 	if (sysload_sum(big_sum, little_sum) > threshold) {
-		trace_sched_hp_event_system_load(raw_smp_processor_id(),
-				big_sum, threshold, "throttled");
+//		trace_sched_hp_event_system_load(raw_smp_processor_id(),
+//				big_sum, threshold, "throttled");
 		return true;
 	}
 
@@ -10691,9 +10691,9 @@ static bool is_big_idle(unsigned long threshold)
 	unsigned long load;
 
 	if (atomic_read(&hmp_num_big_threads) > hpgov_default_level()) {
-		trace_sched_hp_event_system_load(raw_smp_processor_id(),
-				atomic_read(&hmp_num_big_threads), -1,
-				"big threads count/not idle");
+//		trace_sched_hp_event_system_load(raw_smp_processor_id(),
+//				atomic_read(&hmp_num_big_threads), -1,
+//				"big threads count/not idle");
 		return false;
 	}
 
@@ -10724,8 +10724,8 @@ static bool is_big_idle(unsigned long threshold)
 #endif
 
 	if (sysload_sum(big_sum, little_sum) < threshold) {
-		trace_sched_hp_event_system_load(raw_smp_processor_id(),
-				big_sum, threshold, "idle");
+//		trace_sched_hp_event_system_load(raw_smp_processor_id(),
+//				big_sum, threshold, "idle");
 		return true;
 	}
 
@@ -10745,7 +10745,7 @@ static void update_sysload_info(int cpu)
 	contrib /= (rq->avg.runnable_avg_period + 1);
 	rq->sysload_avg_ratio = scale_load(contrib);
 
-	trace_sched_rq_sysload_ratio(cpu, rq->sysload_avg_ratio);
+//	trace_sched_rq_sysload_ratio(cpu, rq->sysload_avg_ratio);
 
 	if (hmp_cpu_is_slowest(cpu))
 		return;

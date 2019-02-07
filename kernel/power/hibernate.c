@@ -299,9 +299,9 @@ static int create_image(int platform_mode)
 
 	in_suspend = 1;
 	save_processor_state();
-	trace_suspend_resume(TPS("machine_suspend"), PM_EVENT_HIBERNATE, true);
+//	trace_suspend_resume(TPS("machine_suspend"), PM_EVENT_HIBERNATE, true);
 	error = swsusp_arch_suspend();
-	trace_suspend_resume(TPS("machine_suspend"), PM_EVENT_HIBERNATE, false);
+//	trace_suspend_resume(TPS("machine_suspend"), PM_EVENT_HIBERNATE, false);
 	if (error)
 		printk(KERN_ERR "PM: Error %d creating hibernation image\n",
 			error);

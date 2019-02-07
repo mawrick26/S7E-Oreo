@@ -1092,7 +1092,7 @@ static void pwq_activate_delayed_work(struct work_struct *work)
 {
 	struct pool_workqueue *pwq = get_work_pwq(work);
 
-	trace_workqueue_activate_work(work);
+//	trace_workqueue_activate_work(work);
 	move_linked_works(work, &pwq->pool->worklist, NULL);
 	__clear_bit(WORK_STRUCT_DELAYED_BIT, work_data_bits(work));
 	pwq->nr_active++;
@@ -1381,7 +1381,7 @@ retry:
 	}
 
 	/* pwq determined, queue */
-	trace_workqueue_queue_work(req_cpu, pwq, work);
+//	trace_workqueue_queue_work(req_cpu, pwq, work);
 
 	if (WARN_ON(!list_empty(&work->entry))) {
 		spin_unlock(&pwq->pool->lock);
@@ -1392,7 +1392,7 @@ retry:
 	work_flags = work_color_to_flags(pwq->work_color);
 
 	if (likely(pwq->nr_active < pwq->max_active)) {
-		trace_workqueue_activate_work(work);
+//		trace_workqueue_activate_work(work);
 		pwq->nr_active++;
 		worklist = &pwq->pool->worklist;
 	} else {
@@ -2035,7 +2035,7 @@ __acquires(&pool->lock)
 
 	lock_map_acquire_read(&pwq->wq->lockdep_map);
 	lock_map_acquire(&lockdep_map);
-	trace_workqueue_execute_start(work);
+//	trace_workqueue_execute_start(work);
 	exynos_ss_work(worker, work, worker->current_func, ESS_FLAG_IN);
 	worker->current_func(work);
 	exynos_ss_work(worker, work, worker->current_func, ESS_FLAG_OUT);
@@ -2043,7 +2043,7 @@ __acquires(&pool->lock)
 	 * While we must be careful to not use "work" after this, the trace
 	 * point will only record its address.
 	 */
-	trace_workqueue_execute_end(work);
+//	trace_workqueue_execute_end(work);
 	lock_map_release(&lockdep_map);
 	lock_map_release(&pwq->wq->lockdep_map);
 

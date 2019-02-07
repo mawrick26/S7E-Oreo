@@ -645,8 +645,8 @@ void resched_curr(struct rq *rq)
 
 	if (set_nr_and_not_polling(curr))
 		smp_send_reschedule(cpu);
-	else
-		trace_sched_wake_idle_without_ipi(cpu);
+//	else
+//		trace_sched_wake_idle_without_ipi(cpu);
 }
 
 void resched_cpu(int cpu)
@@ -711,8 +711,8 @@ static void wake_up_idle_cpu(int cpu)
 
 	if (set_nr_and_not_polling(rq->idle))
 		smp_send_reschedule(cpu);
-	else
-		trace_sched_wake_idle_without_ipi(cpu);
+//	else
+//		trace_sched_wake_idle_without_ipi(cpu);
 }
 
 static bool wake_up_full_nohz_cpu(int cpu)
@@ -1099,7 +1099,7 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
 #endif
 #endif
 
-	trace_sched_migrate_task(p, new_cpu);
+//	trace_sched_migrate_task(p, new_cpu);
 
 	if (task_cpu(p) != new_cpu) {
 		if (p->sched_class->migrate_task_rq)
@@ -1204,7 +1204,7 @@ int migrate_swap(struct task_struct *cur, struct task_struct *p)
 	if (!cpumask_test_cpu(arg.src_cpu, tsk_cpus_allowed(arg.dst_task)))
 		goto out;
 
-	trace_sched_swap_numa(cur, arg.src_cpu, p, arg.dst_cpu);
+//	trace_sched_swap_numa(cur, arg.src_cpu, p, arg.dst_cpu);
 	ret = stop_two_cpus(arg.dst_cpu, arg.src_cpu, migrate_swap_stop, &arg);
 
 out:
@@ -1274,7 +1274,7 @@ unsigned long wait_task_inactive(struct task_struct *p, long match_state)
 		 * just go back and repeat.
 		 */
 		rq = task_rq_lock(p, &flags);
-		trace_sched_wait_task(p);
+//		trace_sched_wait_task(p);
 		running = task_running(rq, p);
 		queued = task_on_rq_queued(p);
 		ncsw = 0;
@@ -1526,7 +1526,7 @@ static void
 ttwu_do_wakeup(struct rq *rq, struct task_struct *p, int wake_flags)
 {
 	check_preempt_curr(rq, p, wake_flags);
-	trace_sched_wakeup(p, true);
+//	trace_sched_wakeup(p, true);
 
 	p->state = TASK_RUNNING;
 #ifdef CONFIG_SMP
@@ -1649,8 +1649,8 @@ static void ttwu_queue_remote(struct task_struct *p, int cpu)
 	if (llist_add(&p->wake_entry, &cpu_rq(cpu)->wake_list)) {
 		if (!set_nr_if_polling(rq->idle))
 			smp_send_reschedule(cpu);
-		else
-			trace_sched_wake_idle_without_ipi(cpu);
+//		else
+//			trace_sched_wake_idle_without_ipi(cpu);
 	}
 }
 
@@ -1665,7 +1665,7 @@ void wake_up_if_idle(int cpu)
 		goto out;
 
 	if (set_nr_if_polling(rq->idle)) {
-		trace_sched_wake_idle_without_ipi(cpu);
+//		trace_sched_wake_idle_without_ipi(cpu);
 	} else {
 		raw_spin_lock_irqsave(&rq->lock, flags);
 		if (is_idle_task(rq->curr))
@@ -2216,7 +2216,7 @@ void wake_up_new_task(struct task_struct *p)
 	rq = __task_rq_lock(p);
 	activate_task(rq, p, 0);
 	p->on_rq = TASK_ON_RQ_QUEUED;
-	trace_sched_wakeup_new(p, true);
+//	trace_sched_wakeup_new(p, true);
 	check_preempt_curr(rq, p, WF_FORK);
 #ifdef CONFIG_SMP
 	if (p->sched_class->task_woken)
@@ -2298,7 +2298,7 @@ static inline void
 prepare_task_switch(struct rq *rq, struct task_struct *prev,
 		    struct task_struct *next)
 {
-	trace_sched_switch(prev, next);
+//	trace_sched_switch(prev, next);
 	sched_info_switch(rq, prev, next);
 	perf_event_task_sched_out(prev, next);
 	fire_sched_out_preempt_notifiers(prev, next);
@@ -2783,7 +2783,7 @@ void preempt_count_add(int val)
 #ifdef CONFIG_DEBUG_PREEMPT
 		current->preempt_disable_ip = ip;
 #endif
-		trace_preempt_off(CALLER_ADDR0, ip);
+//		trace_preempt_off(CALLER_ADDR0, ip);
 	}
 }
 EXPORT_SYMBOL(preempt_count_add);
@@ -2806,7 +2806,7 @@ void preempt_count_sub(int val)
 #endif
 
 	if (preempt_count() == val)
-		trace_preempt_on(CALLER_ADDR0, get_parent_ip(CALLER_ADDR1));
+//		trace_preempt_on(CALLER_ADDR0, get_parent_ip(CALLER_ADDR1));
 	__preempt_count_sub(val);
 }
 EXPORT_SYMBOL(preempt_count_sub);
@@ -3227,7 +3227,7 @@ void rt_mutex_setprio(struct task_struct *p, int prio)
 		goto out_unlock;
 	}
 
-	trace_sched_pi_setprio(p, prio);
+//	trace_sched_pi_setprio(p, prio);
 	oldprio = p->prio;
 	prev_class = p->sched_class;
 	queued = task_on_rq_queued(p);
@@ -5037,7 +5037,7 @@ int migrate_task_to(struct task_struct *p, int target_cpu)
 
 	/* TODO: This is not properly updating schedstats */
 
-	trace_sched_move_numa(p, curr_cpu, target_cpu);
+//	trace_sched_move_numa(p, curr_cpu, target_cpu);
 	return stop_one_cpu(curr_cpu, migration_cpu_stop, &arg);
 }
 
