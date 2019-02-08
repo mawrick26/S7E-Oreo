@@ -118,7 +118,7 @@ static void ext4_inode_csum_set(struct inode *inode, struct ext4_inode *raw,
 static inline int ext4_begin_ordered_truncate(struct inode *inode,
 					      loff_t new_size)
 {
-	trace_ext4_begin_ordered_truncate(inode, new_size);
+//	trace_ext4_begin_ordered_truncate(inode, new_size);
 	/*
 	 * If jinode is zero, then we never opened the file for
 	 * writing, so there's no need to call
@@ -187,7 +187,7 @@ void ext4_evict_inode(struct inode *inode)
 	handle_t *handle;
 	int err;
 
-	trace_ext4_evict_inode(inode);
+//	trace_ext4_evict_inode(inode);
 
 	if (inode->i_nlink) {
 		/*
@@ -333,7 +333,7 @@ void ext4_da_update_reserve_space(struct inode *inode,
 	struct ext4_inode_info *ei = EXT4_I(inode);
 
 	spin_lock(&ei->i_block_reservation_lock);
-	trace_ext4_da_update_reserve_space(inode, used, quota_claim);
+//	trace_ext4_da_update_reserve_space(inode, used, quota_claim);
 	if (unlikely(used > ei->i_reserved_data_blocks)) {
 		ext4_warning(inode->i_sb, "%s: ino %lu, used %d "
 			 "with only %d reserved data blocks",
@@ -992,16 +992,16 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
 	unsigned from, to;
 
 	if (trace_android_fs_datawrite_start_enabled()) {
-		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
+/*		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
 
 		path = android_fstrace_get_pathname(pathbuf,
 						    MAX_TRACE_PATHBUF_LEN,
 						    inode);
 		trace_android_fs_datawrite_start(inode, pos, len,
 						 current->pid, path,
-						 current->comm);
+						 current->comm);*/
 	}
-	trace_ext4_write_begin(inode, pos, len, flags);
+//	trace_ext4_write_begin(inode, pos, len, flags);
 	/*
 	 * Reserve one block more for addition to orphan list in case
 	 * we allocate blocks but write fails for some reason
@@ -1136,8 +1136,8 @@ static int ext4_write_end(struct file *file,
 	int ret = 0, ret2;
 	int i_size_changed = 0;
 
-	trace_android_fs_datawrite_end(inode, pos, len);
-	trace_ext4_write_end(inode, pos, len, copied);
+//	trace_android_fs_datawrite_end(inode, pos, len);
+//	trace_ext4_write_end(inode, pos, len, copied);
 	if (ext4_has_inline_data(inode)) {
 		ret = ext4_write_inline_data_end(inode, pos, len,
 						 copied, page);
@@ -1201,8 +1201,8 @@ static int ext4_journalled_write_end(struct file *file,
 	unsigned from, to;
 	int size_changed = 0;
 
-	trace_android_fs_datawrite_end(inode, pos, len);
-	trace_ext4_journalled_write_end(inode, pos, len, copied);
+//	trace_android_fs_datawrite_end(inode, pos, len);
+//	trace_ext4_journalled_write_end(inode, pos, len, copied);
 	from = pos & (PAGE_CACHE_SIZE - 1);
 	to = from + len;
 
@@ -1289,7 +1289,7 @@ static int ext4_da_reserve_space(struct inode *inode, ext4_lblk_t lblock)
 	 * to be prepared undo if we fail to claim space.
 	 */
 	md_needed = 0;
-	trace_ext4_da_reserve_space(inode, 0);
+//	trace_ext4_da_reserve_space(inode, 0);
 
 	if (ext4_claim_free_clusters(sbi, 1,
 			ext4_test_inode_flag(inode, EXT4_INODE_CORE_FILE) ?
@@ -1314,7 +1314,7 @@ static void ext4_da_release_space(struct inode *inode, int to_free)
 
 	spin_lock(&EXT4_I(inode)->i_block_reservation_lock);
 
-	trace_ext4_da_release_space(inode, to_free);
+//	trace_ext4_da_release_space(inode, to_free);
 	if (unlikely(to_free > ei->i_reserved_data_blocks)) {
 		/*
 		 * if there aren't enough reserved blocks, then the
@@ -1839,7 +1839,7 @@ static int ext4_writepage(struct page *page,
 	struct ext4_io_submit io_submit;
 	bool keep_towrite = false;
 
-	trace_ext4_writepage(page);
+//	trace_ext4_writepage(page);
 	size = i_size_read(inode);
 	if (page->index == size >> PAGE_CACHE_SHIFT)
 		len = size & ~PAGE_CACHE_MASK;
@@ -2146,7 +2146,7 @@ static int mpage_map_one_extent(handle_t *handle, struct mpage_da_data *mpd)
 	int get_blocks_flags;
 	int err, dioread_nolock;
 
-	trace_ext4_da_write_pages_extent(inode, map);
+//	trace_ext4_da_write_pages_extent(inode, map);
 	/*
 	 * Call ext4_map_blocks() to allocate any delayed allocation blocks, or
 	 * to convert an unwritten extent to be initialized (in the case
@@ -2430,7 +2430,7 @@ static int ext4_writepages(struct address_space *mapping,
 			   struct writeback_control *wbc)
 {
 	pgoff_t	writeback_index = 0;
-	long nr_to_write = wbc->nr_to_write;
+//	long nr_to_write = wbc->nr_to_write;
 	int range_whole = 0;
 	int cycled = 1;
 	handle_t *handle = NULL;
@@ -2442,7 +2442,7 @@ static int ext4_writepages(struct address_space *mapping,
 	struct blk_plug plug;
 	bool give_up_on_write = false;
 
-	trace_ext4_writepages(inode, wbc);
+//	trace_ext4_writepages(inode, wbc);
 
 	/*
 	 * No pages to write? This is mainly a kludge to avoid starting
@@ -2555,7 +2555,7 @@ retry:
 			break;
 		}
 
-		trace_ext4_da_write_pages(inode, mpd.first_page, mpd.wbc);
+//		trace_ext4_da_write_pages(inode, mpd.first_page, mpd.wbc);
 		ret = mpage_prepare_extent_to_map(&mpd);
 		if (!ret) {
 			if (mpd.map.m_len)
@@ -2633,8 +2633,8 @@ retry:
 		mapping->writeback_index = mpd.first_page;
 
 out_writepages:
-	trace_ext4_writepages_result(inode, wbc, ret,
-				     nr_to_write - wbc->nr_to_write);
+//	trace_ext4_writepages_result(inode, wbc, ret,
+//				     nr_to_write - wbc->nr_to_write);
 	return ret;
 }
 
@@ -2705,16 +2705,16 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
 	}
 	*fsdata = (void *)0;
 	if (trace_android_fs_datawrite_start_enabled()) {
-		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
+/*		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
 
 		path = android_fstrace_get_pathname(pathbuf,
 						    MAX_TRACE_PATHBUF_LEN,
 						    inode);
 		trace_android_fs_datawrite_start(inode, pos, len,
 						 current->pid,
-						 path, current->comm);
+						 path, current->comm);*/
 	}
-	trace_ext4_da_write_begin(inode, pos, len, flags);
+//	trace_ext4_da_write_begin(inode, pos, len, flags);
 
 	if (ext4_test_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA)) {
 		ret = ext4_da_write_inline_data_begin(mapping, inode,
@@ -2832,8 +2832,8 @@ static int ext4_da_write_end(struct file *file,
 		return ext4_write_end(file, mapping, pos,
 				      len, copied, page, fsdata);
 
-	trace_android_fs_datawrite_end(inode, pos, len);
-	trace_ext4_da_write_end(inode, pos, len, copied);
+//	trace_android_fs_datawrite_end(inode, pos, len);
+//	trace_ext4_da_write_end(inode, pos, len, copied);
 	start = pos & (PAGE_CACHE_SIZE - 1);
 	end = start + copied - 1;
 
@@ -2897,7 +2897,7 @@ out:
  */
 int ext4_alloc_da_blocks(struct inode *inode)
 {
-	trace_ext4_alloc_da_blocks(inode);
+//	trace_ext4_alloc_da_blocks(inode);
 
 	if (!EXT4_I(inode)->i_reserved_data_blocks)
 		return 0;
@@ -3010,7 +3010,7 @@ static int ext4_readpage(struct file *file, struct page *page)
 	int ret = -EAGAIN;
 	struct inode *inode = page->mapping->host;
 
-	trace_ext4_readpage(page);
+//	trace_ext4_readpage(page);
 
 	if (ext4_has_inline_data(inode))
 		ret = ext4_readpage_inline(inode, page);
@@ -3037,7 +3037,7 @@ ext4_readpages(struct file *file, struct address_space *mapping,
 static void ext4_invalidatepage(struct page *page, unsigned int offset,
 				unsigned int length)
 {
-	trace_ext4_invalidatepage(page, offset, length);
+//	trace_ext4_invalidatepage(page, offset, length);
 
 	/* No journalling happens on data buffers when this function is used */
 	WARN_ON(page_has_buffers(page) && buffer_jbd(page_buffers(page)));
@@ -3051,7 +3051,7 @@ static int __ext4_journalled_invalidatepage(struct page *page,
 {
 	journal_t *journal = EXT4_JOURNAL(page->mapping->host);
 
-	trace_ext4_journalled_invalidatepage(page, offset, length);
+//	trace_ext4_journalled_invalidatepage(page, offset, length);
 
 	/*
 	 * If it's a full truncate we just forget about the pending dirtying
@@ -3074,7 +3074,7 @@ static int ext4_releasepage(struct page *page, gfp_t wait)
 {
 	journal_t *journal = EXT4_JOURNAL(page->mapping->host);
 
-	trace_ext4_releasepage(page);
+//	trace_ext4_releasepage(page);
 
 	/* Page has dirty journalled data -> cannot release */
 	if (PageChecked(page))
@@ -3310,27 +3310,27 @@ static ssize_t ext4_direct_IO(int rw, struct kiocb *iocb,
 		return 0;
 
 	if (trace_android_fs_dataread_start_enabled() && (rw == READ)) {
-		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
+/*		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
 
 		path = android_fstrace_get_pathname(pathbuf,
 						    MAX_TRACE_PATHBUF_LEN,
 						    inode);
 		trace_android_fs_dataread_start(inode, offset, count,
 						current->pid, path,
-						current->comm);
+						current->comm);*/
 	}
 	if (trace_android_fs_datawrite_start_enabled() && (rw == WRITE)) {
-		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
+/*		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
 
 		path = android_fstrace_get_pathname(pathbuf,
 						    MAX_TRACE_PATHBUF_LEN,
 						    inode);
 		trace_android_fs_datawrite_start(inode, offset, count,
 						 current->pid, path,
-						 current->comm);
+						 current->comm);*/
 	}
 
-	trace_ext4_direct_IO_enter(inode, offset, count, rw);
+//	trace_ext4_direct_IO_enter(inode, offset, count, rw);
 	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
 		ret = ext4_ext_direct_IO(rw, iocb, iter, offset);
 	else
@@ -3823,7 +3823,7 @@ void ext4_truncate(struct inode *inode)
 	 */
 	if (!(inode->i_state & (I_NEW|I_FREEING)))
 		WARN_ON(!mutex_is_locked(&inode->i_mutex));
-	trace_ext4_truncate_enter(inode);
+//	trace_ext4_truncate_enter(inode);
 
 	if (!ext4_can_truncate(inode))
 		return;
@@ -3902,7 +3902,7 @@ out_stop:
 	ext4_mark_inode_dirty(handle, inode);
 	ext4_journal_stop(handle);
 
-	trace_ext4_truncate_exit(inode);
+//	trace_ext4_truncate_exit(inode);
 }
 
 /*
@@ -4032,7 +4032,7 @@ make_io:
 		 * has in-inode xattrs, or we don't have this inode in memory.
 		 * Read the block from disk.
 		 */
-		trace_ext4_load_inode(inode);
+//		trace_ext4_load_inode(inode);
 		get_bh(bh);
 		bh->b_end_io = end_buffer_read_sync;
 		submit_bh(READ | REQ_META | REQ_PRIO, bh);
@@ -5079,7 +5079,7 @@ int ext4_mark_inode_dirty(handle_t *handle, struct inode *inode)
 	int err, ret;
 
 	might_sleep();
-	trace_ext4_mark_inode_dirty(inode, _RET_IP_);
+//	trace_ext4_mark_inode_dirty(inode, _RET_IP_);
 	err = ext4_reserve_inode_write(handle, inode, &iloc);
 	if (err)
 		return err;
