@@ -885,7 +885,7 @@ exynos_thermal_sensor_temp(struct device *dev,
 {
 	struct exynos_tmu_data *devnode;
 	int i = 0, len = 0;
-	char *name;
+	char *name=NULL;
 
 	list_for_each_entry(devnode, &dtm_dev_list, node) {
 		if(devnode->pdata->d_type == CLUSTER0)
