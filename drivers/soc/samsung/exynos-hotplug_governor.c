@@ -230,7 +230,7 @@ static int exynos_hpgov_update_governor(enum hpgov_event event, int req_cpu_max,
 		return ret;
 	}
 
-	trace_exynos_hpgov_governor_update(event, req_cpu_max, req_cpu_min);
+//	trace_exynos_hpgov_governor_update(event, req_cpu_max, req_cpu_min);
 	if (req_cpu_max)
 		exynos_hpgov.cur_cpu_max = req_cpu_max;
 	if (req_cpu_min)

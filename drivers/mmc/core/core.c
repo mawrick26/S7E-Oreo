@@ -185,7 +185,7 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
 					&host->io_lat_write, delta_us);
 			}
 #endif
-			trace_mmc_blk_rw_end(cmd->opcode, cmd->arg, mrq->data);
+//			trace_mmc_blk_rw_end(cmd->opcode, cmd->arg, mrq->data);
 		}
 
 		if (mrq->stop) {
@@ -585,9 +585,9 @@ struct mmc_async_req *mmc_start_req(struct mmc_host *host,
 		} else
 			areq->mrq->lat_hist_enabled = 0;
 #endif
-		trace_mmc_blk_rw_start(areq->mrq->cmd->opcode,
-				       areq->mrq->cmd->arg,
-				       areq->mrq->data);
+//		trace_mmc_blk_rw_start(areq->mrq->cmd->opcode,
+//				       areq->mrq->cmd->arg,
+//				       areq->mrq->data);
 		start_err = __mmc_start_data_req(host, areq->mrq);
 	}
 
@@ -2022,7 +2022,7 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
 
 	fr = from;
 	nr = to - from + 1;
-	trace_mmc_blk_erase_start(arg, fr, nr);
+//	trace_mmc_blk_erase_start(arg, fr, nr);
 
 	/*
 	 * qty is used to calculate the erase timeout which depends on how many
@@ -2128,7 +2128,7 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
 		 (R1_CURRENT_STATE(cmd.resp[0]) == R1_STATE_PRG));
 out:
 
-	trace_mmc_blk_erase_end(arg, fr, nr);
+//	trace_mmc_blk_erase_end(arg, fr, nr);
 	return err;
 }
 
