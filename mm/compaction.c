@@ -492,7 +492,7 @@ isolate_fail:
 	/* Record how far we have got within the block */
 	*start_pfn = blockpfn;
 
-	trace_mm_compaction_isolate_freepages(nr_scanned, total_isolated);
+//	trace_mm_compaction_isolate_freepages(nr_scanned, total_isolated);
 
 	/*
 	 * If strict isolation is requested by CMA then check that all the
@@ -816,7 +816,7 @@ isolate_success:
 	if (low_pfn == end_pfn)
 		update_pageblock_skip(cc, valid_page, nr_isolated, true);
 
-	trace_mm_compaction_isolate_migratepages(nr_scanned, nr_isolated);
+//	trace_mm_compaction_isolate_migratepages(nr_scanned, nr_isolated);
 
 	count_compact_events(COMPACTMIGRATE_SCANNED, nr_scanned);
 	if (nr_isolated)
@@ -1279,7 +1279,7 @@ static int compact_zone(struct zone *zone, struct compact_control *cc)
 		zone->compact_cached_migrate_pfn[1] = cc->migrate_pfn;
 	}
 
-	trace_mm_compaction_begin(start_pfn, cc->migrate_pfn, cc->free_pfn, end_pfn);
+//	trace_mm_compaction_begin(start_pfn, cc->migrate_pfn, cc->free_pfn, end_pfn);
 
 	migrate_prep_local();
 
@@ -1303,8 +1303,8 @@ static int compact_zone(struct zone *zone, struct compact_control *cc)
 				compaction_free, (unsigned long)cc, cc->mode,
 				MR_COMPACTION);
 
-		trace_mm_compaction_migratepages(cc->nr_migratepages, err,
-							&cc->migratepages);
+//		trace_mm_compaction_migratepages(cc->nr_migratepages, err,
+//							&cc->migratepages);
 
 		/* All pages were either migrated or will be released */
 		cc->nr_migratepages = 0;
@@ -1326,7 +1326,7 @@ out:
 	cc->nr_freepages -= release_freepages(&cc->freepages);
 	VM_BUG_ON(cc->nr_freepages != 0);
 
-	trace_mm_compaction_end(ret);
+//	trace_mm_compaction_end(ret);
 
 	return ret;
 }

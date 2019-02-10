@@ -949,7 +949,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
 
 			/* MIGRATE_MOVABLE list may include MIGRATE_RESERVEs */
 			__free_one_page(page, page_to_pfn(page), zone, 0, mt);
-			trace_mm_page_pcpu_drain(page, 0, mt);
+//			trace_mm_page_pcpu_drain(page, 0, mt);
 		} while (--to_free && --batch_free && !list_empty(list));
 	}
 	spin_unlock(&zone->lock);
@@ -982,7 +982,7 @@ static bool free_pages_prepare(struct page *page, unsigned int order)
 	int page_num;
 #endif
 
-	trace_mm_page_free(page, order);
+//	trace_mm_page_free(page, order);
 	kmemcheck_free_shadow(page, order);
 
 	if (PageMappingFlags(page))
@@ -1422,8 +1422,8 @@ __rmqueue_fallback(struct zone *zone, unsigned int order, int start_migratetype)
 			 */
 			set_freepage_migratetype(page, buddy_type);
 
-			trace_mm_page_alloc_extfrag(page, order, current_order,
-				start_migratetype, migratetype);
+//			trace_mm_page_alloc_extfrag(page, order, current_order,
+//				start_migratetype, migratetype);
 
 			return page;
 		}
@@ -1458,7 +1458,7 @@ retry_reserve:
 		}
 	}
 
-	trace_mm_page_alloc_zone_locked(page, order, migratetype);
+//	trace_mm_page_alloc_zone_locked(page, order, migratetype);
 	return page;
 }
 
@@ -1491,7 +1491,7 @@ retry_reserve :
 		}
 	}
 
-	trace_mm_page_alloc_zone_locked(page, order, migratetype);
+//	trace_mm_page_alloc_zone_locked(page, order, migratetype);
 	return page;
 }
 
@@ -1739,7 +1739,7 @@ void free_hot_cold_page_list(struct list_head *list, bool cold)
 	struct page *page, *next;
 
 	list_for_each_entry_safe(page, next, list, lru) {
-		trace_mm_page_free_batched(page, cold);
+//		trace_mm_page_free_batched(page, cold);
 		free_hot_cold_page(page, cold);
 	}
 }
@@ -3154,7 +3154,7 @@ retry_cpuset:
 				preferred_zone, classzone_idx, migratetype);
 	}
 
-	trace_mm_page_alloc(page, order, gfp_mask, migratetype);
+//	trace_mm_page_alloc(page, order, gfp_mask, migratetype);
 
 out:
 	/*
